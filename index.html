@@ -515,40 +515,99 @@ function render(){
 
 function flowYear(){const n=new Date();const c=chart({y:n.getFullYear(),m:n.getMonth()+1,d:n.getDate(),hh:12,mm:0,tz:8,lon:120,dst:false,male:true,zi23:true});return c.Y}
 
+const JIE=['立春','驚蟄','清明','立夏','芒種','小暑','立秋','白露','寒露','立冬','大雪','小寒'];
+function relText(r){
+  const P=r.P,pn=['年','月','日','時'],out=[],seen=new Set();
+  const live=P.map((p,i)=>p?i:-1).filter(i=>i>=0);
+  for(const i of live)for(const j of live){if(j<=i)continue;const A=P[i].b,B=P[j].b,a=ZHI[A],b=ZHI[B],pair=x=>x.includes(a)&&x.includes(b),pos=`（${pn[i]}支、${pn[j]}支）`;
+    if(A===B){out.push(`${a}${b}${ZIXING.includes(a)?'自刑':'伏吟'}${pos}`);continue;}
+    if(LIUHE.some(pair))out.push(`${a}${b}六合${pos}`);
+    if((A-B+12)%12===6)out.push(`${a}${b}相沖${pos}`);
+    if(HAI.some(pair))out.push(`${a}${b}相害${pos}`);
+    if(SANHE.some(pair))out.push(`${a}${b}半合${EL[[4,0,1,3][SANHE.findIndex(pair)]]}${pos}`);
+    if(XING.some(pair))seen.add(`${a}${b}相刑${pos}`);}
+  const zs=live.map(i=>ZHI[P[i].b]).join('');
+  [['丑戌未','丑戌未三刑齊全'],['寅巳申','寅巳申三刑齊全']].forEach(([k,t])=>{if([...k].every(c=>zs.includes(c))){out.push(t+'（無恩之刑／恃勢之刑）');[...seen].forEach(x=>{if([...k].filter(c=>x.startsWith(c)||x[1]===c).length)seen.delete(x)})}});
+  out.push(...seen);
+  SANHE.forEach((k,n)=>{if([...k].every(c=>zs.includes(c)))out.push(`${k}三合${EL[[4,0,1,3][n]]}局齊全`)});
+  for(const i of live)for(const j of live){if(j<=i||i===2&&false)continue;const A=P[i].s,B=P[j].s;if(i===j)continue;
+    if(ganHe(A,B))out.push(`${GAN[A]}${GAN[B]}相合（${pn[i]}干、${pn[j]}干）`);
+    if(Math.abs(A-B)===6&&Math.min(A,B)<=3)out.push(`${GAN[A]}${GAN[B]}相沖（${pn[i]}干、${pn[j]}干）`);}
+  return out;
+}
+function monthsText(){
+  const n=new Date(),Y=n.getFullYear(),ys=((Y-4)%60+60)%60%10,prev=(ys+9)%10;
+  const cur=chart({y:Y,m:n.getMonth()+1,d:n.getDate(),hh:12,mm:0,tz:8,lon:120,dst:false,male:true,zi23:true}).Mo;
+  const list=[];const xh=(((prev%5)*2+2+11)%10);list.push([11,xh,1]);
+  for(let k=0;k<11;k++)list.push([k,((ys%5)*2+2+k)%10,(k+2)%12]);
+  return list.map(([k,st,b])=>`${JIE[k]}起 ${GAN[st]}${ZHI[b]}${st===cur.s&&b===cur.b?'（目前）':''}`).join('、');
+}
 function chartText(o,r){
-  const ds=r.ds, P=r.P;
-  const line=(p,i)=>{if(!p)return `${PN[i]}：時辰未知`;const x=extraOf(r,p,i);return `${PN[i]}：${GAN[p.s]}${ZHI[p.b]}　天干十神：${i===2?'日主':tenGod(ds,p.s)}　地支藏干：${HIDE[p.b].map(h=>GAN[h]+'('+tenGod(ds,h)+')').join('、')}　納音：${x.ny}　十二運星：${x.yx}　神煞：${x.ss}`};
-  const same=[];P.forEach((p,i)=>{if(!p||i===2)return;const a=tenGod(ds,p.s),b=tenGod(ds,HIDE[p.b][0]);same.push(`${PN[i]}：${a}＋${b}`)});
-  if(r.D) same.push(`日支坐：${tenGod(ds,HIDE[r.D.b][0])}`);
-  const pos=[];['傷官','劫財','偏印','正印','食神','七殺'].forEach(gn=>{const at=[];P.forEach((p,i)=>{if(!p)return;if(i!==2&&tenGod(ds,p.s)===gn)at.push(PN[i][0]+'干');HIDE[p.b].forEach((h,j)=>{if(tenGod(ds,h)===gn)at.push(PN[i][0]+'支'+(j?'藏':'本氣'))})});if(at.length)pos.push(`${gn}在 ${at.join('、')}`)});
+  const ds=r.ds,P=r.P,pn=['年','月','日','時'];
+  const hm=(h,m)=>String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
   const has=gn=>!!r.tally[gn];
   const combos=[['偏印','食神'],['偏印','七殺'],['比肩','食神'],['偏印','偏財'],['七殺','偏財'],['偏印','傷官'],['劫財','傷官']].filter(c=>has(c[0])&&has(c[1])).map(c=>c.join('＋'));
   if(['正印','偏印','食神','七殺'].every(has))combos.push('正印、偏印、食神、七殺齊全（易內耗）');
   if(['偏印','七殺','傷官'].every(has))combos.push('偏印、七殺、傷官齊全（反骨）');
-  const fy=flowYear();
   const g=Object.entries(r.tally).map(([k,v])=>v.t?`${k}${v.t}${v.h?'(另藏'+v.h+')':''}`:`${k}(僅藏${v.h})`).join('、');
-  const cy=r.cur>=0?r.yun[r.cur]:null;
-  return `${o.name?`稱呼：${o.name}\n`:''}性別：${o.male?'男':'女'}
-國曆生日：${o.y}年${o.m}月${o.d}日 ${o.unknown?'時辰未知':String(o.hh).padStart(2,'0')+':'+String(o.mm).padStart(2,'0')}${o.dst?'（夏令時間）':''}，出生地：${o.place}
-${o.unknown||!o.solar?'':`真太陽時：${String(r.t.h|0).padStart(2,'0')}:${String(Math.floor((r.t.h%1)*60)).padStart(2,'0')}\n`}${P.map(line).join('\n')}
-日主：${GAN[ds]}（${EL[elOfGan(ds)]}）
-空亡：年 ${kongwang(r.Y)}・日 ${kongwang(r.D)}（十二神煞年柱以日支起，其餘以年支起）
-月令（月支本氣）：${r.ling}，${r.deling?'得令':'失令'}
-日支（夫妻宮）：${ZHI[r.D.b]}，本氣${tenGod(ds,HIDE[r.D.b][0])}
-最多的十神：${r.top.join('、')}
-日主強弱粗估：${r.str}（依得令、得地、得幫扶加權，比劫印約占 ${Math.round(r.ratio*100)}%；粗估喜用：${r.xi}。僅供參考，請依全局自行判斷）
-命盤特徵：${extras(o,r).join('；')||'無特別標記'}
-十神力量（有沒有力）：${powerText(r)}
-組合的觸發條件：${patterns(r).join('；')||'無'}
-各柱十神組合：${same.join('；')}
-十神數量（天干＋地支本氣，另計藏干）：${g}
-重點十神位置：${pos.join('；')||'無'}
-命盤中出現的組合（含藏干，透干者影響較大）：${combos.join('、')||'無明顯組合'}
-五行數量（天干＋地支本氣）：${EL.split('').map((e,i)=>e+r.cnt[i]).join(' ')}
-大運（${r.fwd?'順':'逆'}排，約${ageStr(r.startY)}起運）：${r.yun.map(y=>`${Math.floor(y.age)}歲${GAN[y.s]}${ZHI[y.b]}(${tenGod(ds,y.s)})`).join('、')}
-目前：實歲約${Math.floor(r.ageNow)}歲，${cy?`正走 ${GAN[cy.s]}${ZHI[cy.b]} 大運（天干${godTag(r,tenGod(ds,cy.s))}、地支${godTag(r,tenGod(ds,HIDE[cy.b][0]))}；${(t=>t.length?'引動：'+t.join('、'):'與原局無明顯合沖')(yinDong(r,cy.s,cy.b))}）`:'尚未起運'}；今年流年 ${GAN[fy.s]}${ZHI[fy.b]}（天干${godTag(r,tenGod(ds,fy.s))}、地支${godTag(r,tenGod(ds,HIDE[fy.b][0]))}）
-未來流年（[喜][忌]依粗估強弱，僅供參考）：
-  ${upcoming(o,r)}`;
+  const live=P.map((p,i)=>p?i:-1).filter(i=>i>=0);
+  const kw=(p,label)=>{const k=kongwang(p);const hit=live.filter(i=>k.includes(ZHI[P[i].b])).map(i=>`${pn[i]}支${ZHI[P[i].b]}`);return `${label}${k}${hit.length?'（'+hit.join('、')+'落空亡）':''}`;};
+  const zero=r.cnt.map((c,i)=>c===0?i:-1).filter(i=>i>=0).map(i=>{const at=live.filter(j=>HIDE[P[j].b].slice(1).some(h=>elOfGan(h)===i)).map(j=>ZHI[P[j].b]+'藏'+HIDE[P[j].b].slice(1).filter(h=>elOfGan(h)===i).map(h=>GAN[h]).join(''));return at.length?`${EL[i]}雖不見於天干與本氣，但地支中藏有：${at.join('、')}`:`${EL[i]}在藏干中也沒有`;});
+  const fy=flowYear();const now=new Date();
+  const yunLines=r.yun.map((y,i)=>{const cur=i===r.cur;const t=cur?yinDong(r,y.s,y.b):[];return `- ${Math.floor(y.age)}~${Math.floor(y.age)+9}歲 ${GAN[y.s]}${ZHI[y.b]}（${Math.floor(y.year)}）天干${godTag(r,tenGod(ds,y.s))}、地支${godTag(r,tenGod(ds,HIDE[y.b][0]))}${cur?`　← 目前${t.length?'，引動：'+t.join('、'):''}`:''}`;}).join('\n');
+  return `[基本資料]
+${o.name?`- 稱呼：${o.name}\n`:''}- 性別：${o.male?'男':'女'}
+- 年齡：實歲${Math.floor(r.ageNow)}歲
+- 國曆生日：${o.y}年${o.m}月${o.d}日 ${o.unknown?'時辰未知':hm(o.hh,o.mm)}${o.dst?'（夏令時間）':''}
+- 出生地：${o.place}
+- 排盤方式：${o.unknown?'時辰未知，不排時柱':o.solar?`真太陽時 ${hm(r.t.h|0,Math.floor((r.t.h%1)*60))}`:'出生時鐘時間'}${r.late?`；晚子時依${o.zi23?'23點':'24點'}換日`:''}
+
+[四柱八字]
+${P.map((p,i)=>`- ${PN[i]}：${p?GAN[p.s]+ZHI[p.b]:'時辰未知'}${i===2?`（日主${GAN[ds]}${EL[elOfGan(ds)]}）`:''}`).join('\n')}
+
+[十神]
+${live.filter(i=>i!==2).map(i=>`- ${pn[i]}干${GAN[P[i].s]}：${tenGod(ds,P[i].s)}`).join('\n')}
+${live.map(i=>`- ${pn[i]}支${ZHI[P[i].b]}（本氣）：${tenGod(ds,HIDE[P[i].b][0])}`).join('\n')}
+
+[藏干]（第一個為本氣）
+${live.map(i=>`- ${pn[i]}支${ZHI[P[i].b]}：${HIDE[P[i].b].map(h=>GAN[h]+' '+tenGod(ds,h)).join('、')}`).join('\n')}
+
+[各柱輔助值]
+${live.map(i=>{const x=extraOf(r,P[i],i);return `- ${PN[i]}：納音${x.ny}、十二長生${x.yx}、神煞${x.ss}`;}).join('\n')}
+（十二神煞年柱以日支起，其餘以年支起）
+
+[干支關係]
+${relText(r).map(x=>'- '+x).join('\n')||'- 無明顯合沖刑害'}
+
+[五行分佈]（天干＋地支本氣）
+- ${EL.split('').map((e,i)=>e+r.cnt[i]).join('、')}
+${zero.map(x=>'- '+x).join('\n')}
+
+[月令與空亡]
+- 月令：${ZHI[r.Mo.b]}（本氣${GAN[HIDE[r.Mo.b][0]]}${EL[elOfGan(HIDE[r.Mo.b][0])]}，為${r.ling}），${r.deling?'得令':'失令'}
+- 日支（夫妻宮）：${ZHI[r.D.b]}，本氣${tenGod(ds,HIDE[r.D.b][0])}
+- 空亡：${kw(r.Y,'年柱')}；${kw(r.D,'日柱')}
+
+[網頁計算的判斷參考]（僅供參考，請依全局自行判斷）
+- 日主強弱粗估：${r.str}（依得令、得地、得幫扶加權，比劫印約占${Math.round(r.ratio*100)}%）
+- 粗估喜用：${r.xi}
+- 最多的十神：${r.top.join('、')}
+- 十神數量：${g}
+- 十神力量：${powerText(r)}
+- 命盤特徵：${extras(o,r).join('；')||'無'}
+- 組合的觸發條件：${patterns(r).join('；')||'無'}
+- 出現的組合：${combos.join('、')||'無'}
+
+[大運]（約${ageStr(r.startY)}起運，${r.fwd?'順':'逆'}排；[喜][忌]依粗估強弱）
+${yunLines}
+
+[流年]（第一個為今年）
+${upcoming(o,r).split('\n  ').map(x=>'- '+x).join('\n')}
+
+[今年流月]（依節氣交接，非國曆1號）
+- ${monthsText()}
+
+今天日期：${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（台灣時間）`;
 }
 
 function buildPrompt(){
