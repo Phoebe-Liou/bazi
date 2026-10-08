@@ -103,6 +103,13 @@ html,body{overflow-x:hidden!important}
 }
 @media(max-width:390px){.mingyu-mobile-scene{min-height:570px!important;padding-inline:13px!important}.mingyu-script{font-size:clamp(49px,13.5vw,62px)!important}}
 </style>
+<style id="gender-champagne-final-override">
+/* Gender selectors only. Both regular and partner chart, including iPhone Safari. */
+html body .seg:has(input[type="radio"][name="sex"]),html body .seg:has(input[type="radio"][name="psex"]){background:#F7F0E6!important;border:1px solid #DDCBB2!important;box-shadow:none!important;border-radius:999px!important;}
+html body .seg:has(input[name="sex"]) > label.sx,html body .seg:has(input[name="psex"]) > label.sx{background:transparent!important;color:#78674F!important;border-radius:999px!important;box-shadow:none!important;}
+html body .seg:has(input[name="sex"]) > label.sx:has(input:checked),html body .seg:has(input[name="psex"]) > label.sx:has(input:checked){background:#EADBC6!important;color:#514636!important;box-shadow:0 1px 3px rgba(120,95,60,.10)!important;}
+html body .seg:has(input[name="sex"]) .sx-t,html body .seg:has(input[name="psex"]) .sx-t{color:inherit!important;}
+</style>
 </head>
 <body>
 <title>靈魂停看聽・命語｜The Unwritten</title>
