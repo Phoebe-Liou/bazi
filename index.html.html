@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<title>靈魂停看聽・命語🌙</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* 版面：單欄問診單 → 四柱命盤 → 大運軸 → 問命理師；五行色只作語意標示 */
+:root{
+  --bg:#e9ede6; --paper:#f6f8f3; --ink:#1f2a24; --muted:#5b6a60; --line:#cbd4c8;
+  --accent:#8a5a1c; --accent-ink:#fff8ec; --focus:#2f6b55;
+  --wood:#3d7a3a; --fire:#b4382c; --earth:#9a6b1f; --metal:#6b6f78; --water:#24507a;
+  --display:"LXGW WenKai TC","Kaiti TC","STKaiti","DFKai-SB",serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141a17; --paper:#1c2420; --ink:#e4ebe3; --muted:#9aa89d; --line:#34413a;
+  --accent:#d9a55a; --accent-ink:#1b140a; --focus:#7cc3a6;
+  --wood:#7fbf6e; --fire:#ec7a68; --earth:#d7a552; --metal:#b4b8c2; --water:#77a8d8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a17; --paper:#1c2420; --ink:#e4ebe3; --muted:#9aa89d; --line:#34413a;
+  --accent:#d9a55a; --accent-ink:#1b140a; --focus:#7cc3a6;
+  --wood:#7fbf6e; --fire:#ec7a68; --earth:#d7a552; --metal:#b4b8c2; --water:#77a8d8; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.65;padding-inline:16px;padding-block:28px 64px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+header h1{font-family:var(--display);font-size:2.4rem;line-height:1.1;margin:0;letter-spacing:.04em}
+header p{margin:.4rem 0 0;color:var(--muted);max-width:34em}
+section{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+h2{font-family:var(--display);font-size:1.35rem;margin:0 0 12px;font-weight:700;letter-spacing:.03em}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px}
+.full{grid-column:1/-1}
+label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted);font-weight:500}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:9px 10px;width:100%;min-width:0}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.seg{display:flex;gap:6px}
+.seg label{flex:1;flex-direction:row;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);border-radius:7px;padding:8px;color:var(--ink);cursor:pointer;font-size:.95rem}
+.seg input{width:auto;accent-color:var(--accent)}
+.check{flex-direction:row;align-items:center;gap:8px;color:var(--ink);font-weight:400;font-size:.9rem}
+.check input{width:auto;accent-color:var(--accent)}
+.hint{font-size:.8rem;color:var(--muted);margin:0}
+.warn{color:var(--fire)}
+.btn{font:inherit;font-weight:700;border:0;border-radius:8px;padding:11px 18px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+/* 命盤 */
+.pillars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;text-align:center}
+.pcol{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;border-radius:8px}
+.pcol.me{background:var(--bg);outline:1px solid var(--line)}
+.plabel{font-size:.75rem;color:var(--muted);letter-spacing:.12em}
+.god{font-size:.8rem;font-weight:700;color:var(--muted);min-height:1.3em}
+.char{font-family:var(--display);font-size:2.6rem;line-height:1.15;font-weight:700}
+.hid{display:flex;flex-direction:column;gap:1px;font-size:.78rem;margin-top:4px;min-height:3.6em}
+.hid span b{font-family:var(--display);font-size:.95rem;margin-right:2px}
+.e0{color:var(--wood)}.e1{color:var(--fire)}.e2{color:var(--earth)}.e3{color:var(--metal)}.e4{color:var(--water)}
+.meta{font-size:.82rem;color:var(--muted);margin-top:14px;display:flex;flex-direction:column;gap:2px}
+.bars{display:grid;grid-template-columns:2.2em 1fr 2em;gap:6px 8px;align-items:center;font-variant-numeric:tabular-nums}
+.bar{height:10px;border-radius:5px;background:var(--bg);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:5px;background:currentColor}
+.gods{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.chip{font-size:.82rem;border:1px solid var(--line);border-radius:99px;padding:3px 10px;background:var(--bg)}
+.chip b{font-variant-numeric:tabular-nums}
+.yun{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.ycell{flex:0 0 auto;min-width:64px;text-align:center;border:1px solid var(--line);border-radius:8px;padding:8px 6px;font-variant-numeric:tabular-nums}
+.ycell.now{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.ycell .c{font-family:var(--display);font-size:1.4rem;font-weight:700;line-height:1.2}
+.ycell small{display:block;color:var(--muted);font-size:.72rem}
+.ycell .g{font-size:.72rem;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:5px 12px;cursor:pointer}
+textarea{resize:vertical}
+#prompt{font-size:.8rem;min-height:220px;font-family:ui-monospace,Menlo,monospace;line-height:1.5}
+details summary{cursor:pointer;color:var(--muted);font-size:.88rem}
+.toast{font-size:.88rem;color:var(--wood);font-weight:700}
+#partnerBox .pillars .char{font-size:2rem}
+.rel{display:flex;flex-direction:column;gap:4px;margin-top:12px;font-size:.9rem}
+.rel b{color:var(--accent)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+@media (max-width:560px){.two{grid-template-columns:minmax(0,1fr)}.char{font-size:2.1rem}header h1{font-size:2rem}}
+@media (prefers-reduced-motion:no-preference){.btn{transition:transform .1s}.btn:active{transform:scale(.97)}}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>靈魂停看聽・命語🌙</h1>
+  <p>輸入國曆生日與出生地，自動以真太陽時排出四柱與大運。寫下你現在卡住的事，一鍵複製，貼給 AI 命理師看盤。</p>
+</header>
+
+<section aria-labelledby="h-in">
+  <h2 id="h-in">生辰資料</h2>
+  <form id="f" class="grid" novalidate>
+    <label>稱呼（選填）<input id="name" placeholder="例：小美"></label>
+    <div><span class="hint" style="display:block;margin-bottom:4px;font-weight:500">性別（排大運用）</span>
+      <div class="seg"><label><input type="radio" name="sex" id="sexM" value="1" checked>男</label><label><input type="radio" name="sex" id="sexF" value="0">女</label></div></div>
+    <label>國曆生日<input type="date" id="date" min="1900-01-01" max="2100-12-31" required></label>
+    <label>出生時間（時鐘時間）<input type="time" id="time"></label>
+    <label class="check full"><input type="checkbox" id="unknown">不知道出生時間（不排時柱）</label>
+    <label class="full">出生地<select id="place"></select></label>
+    <div id="custom" class="grid full" hidden>
+      <label>經度（東經為正）<input type="number" id="clon" step="0.01" value="121.5"></label>
+      <label>時區（UTC+）<input type="number" id="ctz" step="0.5" value="8"></label>
+    </div>
+    <label class="check full"><input type="checkbox" id="dst">出生當時實施夏令時間（日光節約，時鐘撥快一小時）</label>
+    <p id="dstHint" class="hint warn full" hidden></p>
+    <label class="full">晚子時（23:00–24:00）
+      <select id="zi"><option value="1">23 點換日（日柱算隔天）</option><option value="0">24 點換日（日柱算當天）</option></select></label>
+  </form>
+</section>
+
+<section aria-labelledby="h-chart">
+  <h2 id="h-chart">命盤</h2>
+  <p id="sample" class="hint" style="margin-bottom:10px">目前顯示的是範例生日，改成你的資料即可。</p>
+  <div class="pillars" id="pillars"></div>
+  <div class="meta" id="meta"></div>
+  <div class="gods" id="gods"></div>
+</section>
+
+<div class="two">
+<section aria-labelledby="h-el">
+  <h2 id="h-el">五行分布</h2>
+  <div class="bars" id="bars"></div>
+  <p class="hint" style="margin-top:10px">只計天干與地支本氣，給 AI 參考用，旺衰請交給命理師判斷。</p>
+</section>
+<section aria-labelledby="h-yun">
+  <h2 id="h-yun">大運</h2>
+  <div class="yun" id="yun"></div>
+  <p class="hint" id="yunNote" style="margin-top:8px"></p>
+</section>
+</div>
+
+<section aria-labelledby="h-pt">
+  <h2 id="h-pt">另一半（合盤）</h2>
+  <label class="check"><input type="checkbox" id="pOn">加入另一半或心儀對象的生日，一起看你們怎麼相處</label>
+  <div id="partnerBox" hidden style="margin-top:14px">
+    <form id="pf" class="grid" novalidate>
+      <label>對方稱呼（選填）<input id="pname" placeholder="例：阿哲"></label>
+      <div><span class="hint" style="display:block;margin-bottom:4px;font-weight:500">對方性別</span>
+        <div class="seg"><label><input type="radio" name="psex" id="psexM" value="1">男</label><label><input type="radio" name="psex" id="psexF" value="0" checked>女</label></div></div>
+      <label>對方國曆生日<input type="date" id="pdate" min="1900-01-01" max="2100-12-31"></label>
+      <label>對方出生時間<input type="time" id="ptime"></label>
+      <label class="check full"><input type="checkbox" id="punknown">不知道對方出生時間</label>
+      <label class="full">對方出生地<select id="pplace"></select></label>
+    </form>
+    <div class="pillars" id="ppillars" style="margin-top:16px"></div>
+    <div class="meta" id="pmeta"></div>
+    <div class="rel" id="rel"></div>
+  </div>
+</section>
+
+<section aria-labelledby="h-ask">
+  <h2 id="h-ask">問命理師</h2>
+  <div class="chips" id="chips">
+    <button type="button" data-q="我對工作方向很迷茫，不知道該留下還是換跑道，適合往哪裡走？">工作方向</button>
+    <button type="button" data-q="感情上我一直卡住，我在關係裡是什麼樣的人？該怎麼調整？">感情</button>
+    <button type="button" data-q="我在感情裡常被誤會成什麼樣子？我真正愛人的方式是什麼？適合什麼樣的另一半？">我的愛情說明書</button>
+    <button type="button" data-q="我們兩個合不合？彼此在對方眼中是什麼角色？常會卡在哪裡、該怎麼相處？">我們合不合</button>
+    <button type="button" data-q="我的感情什麼時候比較容易有好消息？未來幾年哪一年適合把握？">感情時機</button>
+    <button type="button" data-q="我適合跟人合夥，還是自己做比較好？">合夥還是自己做</button>
+    <button type="button" data-q="以我的命盤，平常生活可以怎麼養運？缺的五行要怎麼補？">怎麼養運</button>
+    <button type="button" data-q="我的財庫在哪裡？什麼時候是我的財富窗口期？平常要怎麼守住錢？">財庫與窗口期</button>
+    <button type="button" data-q="我的財運如何？適合用什麼方式賺錢、存錢？">財運</button>
+    <button type="button" data-q="今年和明年對我來說是什麼樣的一年？要注意什麼、該把握什麼？">今明兩年</button>
+    <button type="button" data-q="我常覺得沒人懂我、很孤單，我該怎麼跟自己相處？">跟自己相處</button>
+  </div>
+  <label style="margin-top:12px">你現在最迷茫的事<textarea id="q" rows="4" placeholder="越具體越好：發生了什麼、你卡在哪、想知道什麼。"></textarea></label>
+  <div class="row" style="margin-top:14px">
+    <button class="btn" type="button" id="copy">複製給 AI</button>
+    <a class="btn ghost" href="https://claude.ai/new" target="_blank" rel="noopener">開啟 Claude</a>
+    <a class="btn ghost" href="https://chatgpt.com/" target="_blank" rel="noopener">開啟 ChatGPT</a>
+    <span class="toast" id="toast" role="status"></span>
+  </div>
+  <p class="hint" style="margin-top:8px">複製後到 AI 對話框貼上送出即可。想繼續追問，直接在同一個對話裡問。</p>
+  <details style="margin-top:12px"><summary>查看要貼給 AI 的完整內容</summary>
+    <textarea id="prompt" readonly style="margin-top:8px"></textarea></details>
+</section>
+</div>
+
+<style id="the-unwritten-visual-only">
+
+/* THE UNWRITTEN — 禪風視覺覆寫層。原有程式與表單結構完全不變。 */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Great+Vibes&family=Noto+Serif+TC:wght@400;500;600;700&display=swap');
+:root,:root[data-theme="light"]{
+ --bg:#f4f1e9;--paper:#fffdf8;--ink:#34483f;--muted:#77847a;--line:#e3ddd0;
+ --accent:#94774e;--accent-ink:#fffaf1;--focus:#597e70;
+ --wood:#537f64;--fire:#b56d60;--earth:#aa8651;--metal:#7c8489;--water:#557c92;
+ --display:"Noto Serif TC","LXGW WenKai TC",serif;
+ --body:"DM Sans","Noto Sans TC","Microsoft JhengHei",sans-serif;
+ color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --bg:#202823;--paper:#29332d;--ink:#eae6d9;--muted:#b2baae;--line:#455047;
+ --accent:#c7ad80;--accent-ink:#242923;--focus:#a6c8b7;
+ --wood:#9fc1a1;--fire:#d8958a;--earth:#d2b27b;--metal:#b4b9bd;--water:#9cb7c8;
+}}
+:root[data-theme="dark"]{
+ --bg:#202823;--paper:#29332d;--ink:#eae6d9;--muted:#b2baae;--line:#455047;
+ --accent:#c7ad80;--accent-ink:#242923;--focus:#a6c8b7;
+ --wood:#9fc1a1;--fire:#d8958a;--earth:#d2b27b;--metal:#b4b9bd;--water:#9cb7c8;
+}
+html{scroll-behavior:smooth}
+body{padding:0 20px 90px;background:var(--bg);font-size:15px;line-height:1.8;letter-spacing:.012em}
+body::before{content:"";position:absolute;top:0;left:0;width:100%;height:510px;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(255,253,247,.1) 0%,var(--bg) 100%),url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201440%20460%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22m%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23a5b0a9%22%20stop-opacity%3D%22.35%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a5b0a9%22%20stop-opacity%3D%220%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M0%20350%20Q80%20260%20155%20295%20Q245%20160%20330%20270%20Q420%20220%20510%20340%20Q610%20270%20700%20330%20Q800%20195%20895%20285%20Q985%20170%201070%20300%20Q1190%20220%201270%20315%20Q1360%20200%201440%20295%20L1440%20460%20L0%20460Z%22%20fill%3D%22url%28%23m%29%22%2F%3E%3Cpath%20d%3D%22M0%20400%20Q110%20320%20220%20390%20Q350%20290%20460%20395%20Q580%20345%20720%20408%20Q820%20305%20920%20380%20Q1060%20300%201180%20390%20Q1300%20330%201440%20400%20L1440%20460%20L0%20460Z%22%20fill%3D%22%23879991%22%20opacity%3D%22.10%22%2F%3E%3C%2Fsvg%3E") center bottom/cover no-repeat;opacity:.85}
+.wrap{max-width:1040px;gap:25px}
+header{min-height:390px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:66px 20px 42px;position:relative}
+header::before{content:"靈 魂 停 看 聽";font-family:var(--display);font-size:.79rem;letter-spacing:.45em;color:var(--muted);margin-bottom:16px}
+header h1{font-size:0;line-height:1.2;letter-spacing:0;margin:0;color:var(--ink)}
+header h1::before{content:"命 語";display:block;font-family:var(--display);font-size:clamp(3.4rem,9vw,5.8rem);font-weight:600;letter-spacing:.19em;margin-left:.19em;text-shadow:0 5px 25px rgba(126,112,84,.08)}
+header h1::after{content:"The Unwritten";display:block;font-family:"Great Vibes","Brush Script MT",cursive;font-size:clamp(3.1rem,7.5vw,5.1rem);font-weight:400;letter-spacing:0;color:var(--accent);margin-top:8px;line-height:1.2}
+header p{font-size:0;max-width:unset;margin:18px 0 0}
+header p::before{content:"生辰是序章，人生由你續寫。";display:block;font-family:var(--display);font-size:1.05rem;letter-spacing:.2em;color:var(--ink)}
+header p::after{content:"BAZI · THE ART OF UNDERSTANDING DESTINY";display:block;font-family:"DM Sans",sans-serif;font-size:.65rem;letter-spacing:.28em;color:var(--muted);margin-top:12px}
+section{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:clamp(22px,3vw,34px);box-shadow:0 10px 34px rgba(57,68,54,.035)}
+h2{font-size:1.32rem;font-weight:600;letter-spacing:.12em;display:flex;align-items:center;gap:12px;margin-bottom:21px}
+h2::before{content:"";width:3px;height:1.1em;background:var(--accent);border-radius:8px;opacity:.7}
+.grid{gap:16px 18px}
+label{font-size:.85rem;gap:7px}
+input,select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:11px 13px;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(147,120,79,.1)}
+.seg{gap:8px}.seg label{border-radius:9px;padding:10px;background:var(--bg)}
+.seg label:has(input:checked){background:color-mix(in srgb,var(--accent) 11%,var(--paper));border-color:var(--accent)}
+.btn{border-radius:9px;padding:12px 21px;letter-spacing:.07em;transition:filter .2s,transform .2s}
+.btn:hover{filter:brightness(.94)}.btn.ghost{background:var(--paper)}
+.pillars{gap:12px}.pcol{padding:20px 8px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.pcol.me{background:color-mix(in srgb,var(--accent) 8%,var(--paper));outline:none;border-color:var(--accent)}
+.plabel{letter-spacing:.2em}.god{margin-top:7px;font-size:.76rem}.char{font-size:clamp(2.1rem,5vw,3rem);line-height:1.4}
+.hid{margin-top:10px;gap:4px}.meta{margin-top:19px;padding-top:15px;border-top:1px solid var(--line)}
+.chip,.chips button{background:var(--bg);border-radius:999px;border-color:var(--line)}
+.chips{gap:9px}.chips button{padding:7px 14px;transition:background .2s,border-color .2s}
+.chips button:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--paper))}
+.bar{height:9px;background:var(--bg)}.ycell{min-width:75px;border-radius:10px;background:var(--bg);padding:12px 9px}.ycell.now{background:color-mix(in srgb,var(--accent) 10%,var(--paper))}
+#prompt{background:var(--bg)}.hint{line-height:1.8}
+@media(min-width:850px){.two{gap:25px}.two>section{min-width:0}}
+@media(max-width:560px){body{padding:0 12px 60px}body::before{height:400px}header{min-height:320px;padding:46px 10px 28px}header h1::before{font-size:3.5rem}header h1::after{font-size:3.45rem}header p::before{font-size:.86rem;letter-spacing:.1em}header p::after{font-size:.54rem;letter-spacing:.12em}section{padding:19px 15px;border-radius:13px}.grid{gap:13px 10px}.pillars{gap:5px}.pcol{padding:12px 2px}.char{font-size:2rem}.hid{font-size:.65rem}.hid span b{font-size:.78rem}.plabel{font-size:.67rem}.god{font-size:.65rem}h2{font-size:1.15rem}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+</style>
+<script>
+const GAN='甲乙丙丁戊己庚辛壬癸',ZHI='子丑寅卯辰巳午未申酉戌亥',EL='木火土金水';
+const ZHI_EL=[4,2,0,0,2,1,1,2,3,3,2,4];
+const HIDE=[[9],[5,9,7],[0,2,4],[1],[4,1,9],[2,6,4],[3,5],[5,3,1],[6,8,4],[7],[4,7,3],[8,0]];
+const TG=[['比肩','劫財'],['食神','傷官'],['偏財','正財'],['七殺','正官'],['偏印','正印']];
+const rad=Math.PI/180;
+function jd(y,m,d){if(m<=2){y--;m+=12}const A=Math.floor(y/100),B=2-A+Math.floor(A/4);return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5}
+function fromJD(J){const Z=Math.floor(J+0.5),F=J+0.5-Z;let A=Z;if(Z>=2299161){const a=Math.floor((Z-1867216.25)/36524.25);A=Z+1+a-Math.floor(a/4)}const B=A+1524,C=Math.floor((B-122.1)/365.25),D=Math.floor(365.25*C),E=Math.floor((B-D)/30.6001);const day=B-D-Math.floor(30.6001*E)+F;const m=E<14?E-1:E-13,y=m>2?C-4716:C-4715,d=Math.floor(day);return{y,m,d,h:(day-d)*24}}
+function sun(J){const T=(J+69/86400-2451545)/36525;const L0=(280.46646+36000.76983*T+0.0003032*T*T)%360;const M=357.52911+35999.05029*T-0.0001537*T*T;const e=0.016708634-0.000042037*T;
+const C=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(M*rad)+(0.019993-0.000101*T)*Math.sin(2*M*rad)+0.000289*Math.sin(3*M*rad);
+const O=125.04-1934.136*T;let lon=(L0+C-0.00569-0.00478*Math.sin(O*rad))%360;if(lon<0)lon+=360;
+const eps=(23.439291-0.0130042*T+0.00256*Math.cos(O*rad))*rad;const y=Math.tan(eps/2)**2;const l=L0*rad,m=M*rad;
+const E=y*Math.sin(2*l)-2*e*Math.sin(m)+4*e*y*Math.sin(m)*Math.cos(2*l)-0.5*y*y*Math.sin(4*l)-1.25*e*e*Math.sin(2*m);
+return{lon,eot:E*4/rad}}
+function solve(target,J){for(let i=0;i<10;i++){const d=((target-sun(J).lon+540)%360)-180;J+=d*365.2422/360}return J}
+const tenGod=(day,o)=>{const r=((Math.floor(o/2)-Math.floor(day/2))+5)%5;return TG[r][day%2===o%2?0:1]};
+const idx60=(s,b)=>{for(let i=0;i<60;i++)if(i%10===s&&i%12===b)return i};
+const pil=i=>({s:i%10,b:i%12,i});
+function chart(o){// o:{y,m,d,hh,mm,unknown,tz,dst,lon,male,zi23,now}
+ const hh=o.unknown?12:o.hh,mm=o.unknown?0:o.mm;
+ const ut=jd(o.y,o.m,o.d+(hh+mm/60-o.tz-(o.dst?1:0))/24);
+ const s=sun(ut);const tj=ut+o.lon/360+s.eot/1440;const t=fromJD(tj);
+ // year
+ const lc=solve(315,jd(o.y,2,4));let by=o.y;if(ut<lc)by--;
+ const Y=pil(((by-4)%60+60)%60);
+ const k=Math.floor(((s.lon-315+720)%360)/30);const mb=(k+2)%12,ms=((Y.s%5)*2+2+k)%10;const Mo=pil(idx60(ms,mb));
+ let jdn=Math.floor(tj+0.5);const late=!o.unknown&&t.h>=23;
+ const D=pil(((jdn+(late&&o.zi23?1:0)+49)%60+60)%60);
+ let H=null;if(!o.unknown){const hb=Math.floor((t.h+1)/2)%12;const ds=((jdn+(late?1:0)+49)%60)%10;H=pil(idx60(((ds%5)*2+hb)%10,hb))}
+ // jie
+ const prevT=(15+30*Math.floor(((s.lon-15+360)%360)/30))%360;
+ const prevJ=solve(prevT,ut-((s.lon-prevT+360)%360)*365.2422/360),nextJ=solve((prevT+30)%360,prevJ+30.4);
+ const fwd=(Y.s%2===0)===o.male;const days=fwd?nextJ-ut:ut-prevJ;const startY=days/3;
+ const yun=[];for(let i=1;i<=8;i++){const p=pil(((Mo.i+(fwd?i:-i))%60+60)%60);const a=startY+(i-1)*10;yun.push({...p,age:a,year:o.y+a})}
+ const nearJie=Math.min(nextJ-ut,ut-prevJ)*24;
+ return{Y,Mo,D,H,t,eotMin:s.eot,offMin:(tj-ut)*1440-o.tz*60,fwd,startY,yun,nearJie,late,lon:s.lon}}
+
+
+const PLACES=[["台北市",121.56],["新北市",121.46],["基隆市",121.74],["桃園市",121.30],["新竹市",120.97],["新竹縣",121.01],["苗栗縣",120.82],["台中市",120.68],["彰化縣",120.54],["南投縣",120.69],["雲林縣",120.43],["嘉義市",120.45],["嘉義縣",120.30],["台南市",120.21],["高雄市",120.31],["屏東縣",120.49],["宜蘭縣",121.75],["花蓮縣",121.60],["台東縣",121.15],["澎湖縣",119.57],["金門縣",118.32],["連江縣（馬祖）",119.95],["香港",114.17],["澳門",113.54],["上海",121.47],["北京",116.40],["廣州",113.26],["新加坡",103.82],["吉隆坡",101.69]];
+// 台灣歷年夏令時間（供提醒，以出生證明為準）
+const DST=[[1945,1951,"5/1–9/30"],[1952,1952,"3/1–10/31"],[1953,1954,"4/1–10/31"],[1955,1959,"4/1–9/30"],[1960,1961,"6/1–9/30"],[1974,1975,"4/1–9/30"],[1979,1979,"7/1–9/30"]];
+const $=id=>document.getElementById(id);
+const ps=$('place');
+ps.innerHTML='<optgroup label="台灣">'+PLACES.slice(0,22).map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('')+'</optgroup><optgroup label="其他地區（UTC+8）">'+PLACES.slice(22).map((p,i)=>`<option value="${i+22}">${p[0]}</option>`).join('')+'</optgroup><option value="c">其他（自行輸入經度與時區）</option>';
+document.getElementById('pplace').innerHTML=ps.innerHTML.replace('<option value="c">其他（自行輸入經度與時區）</option>','');
+const PN=['年柱','月柱','日柱','時柱'];
+const elOfGan=s=>Math.floor(s/2), cG=s=>`<span class="e${elOfGan(s)}">${GAN[s]}</span>`, cZ=b=>`<span class="e${ZHI_EL[b]}">${ZHI[b]}</span>`;
+const pstr=p=>p?GAN[p.s]+ZHI[p.b]:'未知';
+const ageStr=a=>{const y=Math.floor(a),m=Math.round((a-y)*12);return m===12?`${y+1}歲`:`${y}歲${m?m+'個月':''}`};
+let isSample=true, last=null;
+
+function read(){
+  const [y,m,d]=($('date').value||'1990-05-15').split('-').map(Number);
+  const [hh,mm]=($('time').value||'12:00').split(':').map(Number);
+  const pv=ps.value, cust=pv==='c';
+  const place=cust?`自訂（東經${$('clon').value}°，UTC+${$('ctz').value}）`:PLACES[+pv][0];
+  return {y,m,d,hh,mm,unknown:$('unknown').checked,tz:cust?+$('ctz').value:8,lon:cust?+$('clon').value:PLACES[+pv][1],dst:$('dst').checked,male:$('sexM').checked,zi23:$('zi').value==='1',place,name:$('name').value.trim()};
+}
+
+function analyze(o){
+  const r=chart(o);const P=[r.Y,r.Mo,r.D,r.H], ds=r.D.s;r.P=P;r.ds=ds;
+  let sup=0,all=0;const w=(h,x)=>{all+=x;if(/比肩|劫財|正印|偏印/.test(tenGod(ds,h)))sup+=x};
+  const SW=[.8,1.2,0,1.2],BW=[.8,2.5,1.5,1];P.forEach((p,i)=>{if(!p)return;if(i!==2)w(p.s,SW[i]);HIDE[p.b].forEach((h,j)=>w(h,(j?(j===1?.5:.3):1)*BW[i]))});
+  r.ratio=sup/all;r.str=r.ratio>=.58?'偏強':r.ratio<=.42?'偏弱':'接近中和';
+  r.xi=r.str==='偏強'?'食傷、財、官殺（洩、耗、制）':r.str==='偏弱'?'印、比劫（生、扶）':'需看調候與五行流通';
+  r.ling=tenGod(ds,HIDE[r.Mo.b][0]);r.deling=/比肩|劫財|正印|偏印/.test(r.ling);
+  const tally={};const add=(g,k)=>{tally[g]=tally[g]||{t:0,h:0};tally[g][k]++};
+  P.forEach((p,i)=>{if(!p)return;if(i!==2)add(tenGod(ds,p.s),'t');HIDE[p.b].forEach((h,j)=>add(tenGod(ds,h),j===0?'t':'h'))});
+  r.tally=tally;r.top=Object.entries(tally).map(([k,v])=>[k,v.t+v.h*0.5]).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
+  const cnt=[0,0,0,0,0];P.forEach(p=>{if(p){cnt[elOfGan(p.s)]++;cnt[ZHI_EL[p.b]]++}});r.cnt=cnt;
+  r.ageNow=(new Date()-new Date(o.y,o.m-1,o.d))/31557600000;
+  r.cur=r.yun.findIndex((y,i)=>r.ageNow>=y.age&&(i===7||r.ageNow<r.yun[i+1].age));
+  return r;
+}
+function pillarsHTML(o,r){
+  return r.P.map((p,i)=>{
+    if(!p)return `<div class="pcol"><div class="plabel">${PN[i]}</div><div class="god"></div><div class="char" style="color:var(--line)">？</div><div class="char" style="color:var(--line)">？</div><div class="hid"><span>時辰未知</span></div></div>`;
+    return `<div class="pcol${i===2?' me':''}"><div class="plabel">${PN[i]}</div><div class="god">${i===2?(o.male?'日主（元男）':'日主（元女）'):tenGod(r.ds,p.s)}</div>
+    <div class="char">${cG(p.s)}</div><div class="char">${cZ(p.b)}</div>
+    <div class="hid">${HIDE[p.b].map(h=>`<span><b class="e${elOfGan(h)}">${GAN[h]}</b>${tenGod(r.ds,h)}</span>`).join('')}</div></div>`}).join('');
+}
+// 地支、天干關係
+const LIUHE=['子丑','寅亥','卯戌','辰酉','巳申','午未'],HAI=['子未','丑午','寅巳','卯辰','申亥','酉戌'],SANHE=['申子辰','亥卯未','寅午戌','巳酉丑'];
+function zhiRel(a,b){const A=ZHI[a],B=ZHI[b],pair=x=>x.includes(A)&&x.includes(B);
+  if(a===b)return '相同';if(LIUHE.some(pair))return '六合';if((a-b+12)%12===6)return '六沖';if(HAI.some(pair))return '相害';if(SANHE.some(pair))return '半合';return '';}
+const ganHe=(a,b)=>Math.abs(a-b)===5;
+function readP(){
+  const [y,m,d]=($('pdate').value||'1992-08-20').split('-').map(Number);
+  const [hh,mm]=($('ptime').value||'12:00').split(':').map(Number);
+  const pv=+$('pplace').value||0;
+  return {y,m,d,hh,mm,unknown:$('punknown').checked||!$('ptime').value,tz:8,lon:PLACES[pv][1],dst:false,male:$('psexM').checked,zi23:$('zi').value==='1',place:PLACES[pv][0],name:$('pname').value.trim()};
+}
+function relations(a,ra,b,rb){
+  const out=[];const na=a.name||'你',nb=b.name||'對方';
+  out.push(`${nb}的日主${GAN[rb.ds]}，是${na}的「${tenGod(ra.ds,rb.ds)}」；${na}的日主${GAN[ra.ds]}，是${nb}的「${tenGod(rb.ds,ra.ds)}」`);
+  if(ganHe(ra.ds,rb.ds))out.push(`兩人日主天干相合（${GAN[ra.ds]}${GAN[rb.ds]}合）`);
+  const dz=zhiRel(ra.D.b,rb.D.b);out.push(`日支（夫妻宮）${ZHI[ra.D.b]}與${ZHI[rb.D.b]}：${dz||'無明顯合沖'}`);
+  const yz=zhiRel(ra.Y.b,rb.Y.b);if(yz)out.push(`年支（生肖）${ZHI[ra.Y.b]}與${ZHI[rb.Y.b]}：${yz}`);
+  const weak=ra.cnt.map((c,i)=>c===0?i:-1).filter(i=>i>=0),give=weak.filter(i=>rb.cnt[i]>=2).map(i=>EL[i]);
+  const weak2=rb.cnt.map((c,i)=>c===0?i:-1).filter(i=>i>=0),give2=weak2.filter(i=>ra.cnt[i]>=2).map(i=>EL[i]);
+  if(give.length)out.push(`${na}缺${give.join('、')}，${nb}剛好較多`);
+  if(give2.length)out.push(`${nb}缺${give2.join('、')}，${na}剛好較多`);
+  return out;
+}
+
+const KU=[7,10,10,1,4]; // 木未 火戌 土戌 金丑 水辰
+function extras(o,r){
+  const ds=r.ds,P=r.P,out=[];const dEl=elOfGan(ds);
+  const pn=['年','月','日','時'];
+  // 財
+  const ct=[],ch=[];P.forEach((p,i)=>{if(!p)return;if(i!==2&&/正財|偏財/.test(tenGod(ds,p.s)))ct.push(pn[i]+'干'+tenGod(ds,p.s));HIDE[p.b].forEach((h,j)=>{if(/正財|偏財/.test(tenGod(ds,h)))ch.push(pn[i]+'支'+(j?'藏':'')+tenGod(ds,h))})});
+  const cEl=(dEl+2)%5,ku=P.some(p=>p&&p.b===KU[cEl]);
+  const kus=P.filter(p=>p&&[1,4,7,10].includes(p.b)).map(p=>ZHI[p.b]);
+  const nC=ct.length+ch.length,kuAt=P.map((p,i)=>p&&p.b===KU[cEl]?pn[i]+'柱':null).filter(Boolean);
+  const cLvl=nC>=3?'財星偏多（含藏干，需配合強弱與喜忌）':nC>=1?'財星不算多（看位置與組合是否得用）':'天干地支藏干都沒有，屬真正無財星（不等於無財運）';
+  out.push(`財星：${ct.length?'透出 '+ct.join('、'):'未透干'}${ch.length?'；地支 '+ch.join('、'):''}；共${nC}個，${cLvl}${!ct.length&&ch.length?'；藏而不透，屬有財不顯':''}；財庫為${ZHI[KU[cEl]]}，${kuAt.length?'落在 '+kuAt.join('、')+'，開庫鑰匙是'+ZHI[(KU[cEl]+6)%12]+'（大運流年走到'+ZHI[(KU[cEl]+6)%12]+'為窗口期）':'原局無財庫'}${r.H&&tenGod(ds,r.H.s)==='偏財'?'；時干偏財':''}`);
+  // 殺印相生
+  const hasSha=P.some((p,i)=>p&&((i!==2&&tenGod(ds,p.s)==='七殺')||tenGod(ds,HIDE[p.b][0])==='七殺'));
+  const yinNear=[r.Mo&&tenGod(ds,r.Mo.s),r.H&&tenGod(ds,r.H.s),tenGod(ds,HIDE[r.D.b][0])].some(g=>/印/.test(g||''));
+  if(hasSha)out.push(`七殺${yinNear?'有印星貼身（月干、時干或日支），具殺印相生的條件，仍要看殺夠不夠旺、身能不能扛':'沒有印星貼身化解'}`);
+  // 官殺重印弱（倒吃甘蔗型）
+  const cntG=re=>Object.entries(r.tally).filter(([k])=>re.test(k)).reduce((a,[,v])=>a+v.t+v.h*.5,0);
+  const gs=cntG(/正官|七殺/),yn=cntG(/印/),ss=cntG(/食神|傷官/);
+  if(gs>=2.5&&yn<=1)out.push('官殺偏重、印星偏弱（早年壓力多的格局，看後面大運有沒有印星來化）');
+  // 高敏感
+  if([1,3,9].includes(ds)||(r.str==='偏弱'&&ss>=2.5))out.push(`屬於感受力強、容易接收別人情緒的類型（${[1,3,9].includes(ds)?'日主'+GAN[ds]+'為陰干':'身弱食傷旺'}）`);
+  // 聰明格局線索
+  const c=r.cnt;
+  if(dEl===0&&c[1]>=2)out.push('木火通明的條件（木日主見火多）');
+  if(dEl===3&&c[4]>=1)out.push('金水相涵的條件（金日主見水，金白水清或金水食傷，要看身強弱）');
+  if(dEl===4&&c[3]>=1&&c[2]<=2)out.push('金白水清的條件（水日主有金生）');
+  // 缺五行
+  const miss=c.map((v,i)=>v===0?EL[i]:null).filter(Boolean);
+  if(miss.length)out.push(`五行缺：${miss.join('、')}`);
+  return out;
+}
+const XING=['寅巳','巳申','寅申','丑戌','戌未','丑未','子卯'],ZIXING='辰午酉亥';
+function zhiRel2(a,b){const out=[],A=ZHI[a],B=ZHI[b],pair=x=>x.includes(A)&&x.includes(B);
+  if(a===b)out.push(ZIXING.includes(A)?'伏吟自刑':'伏吟');
+  else{if(LIUHE.some(pair))out.push('六合');if((a-b+12)%12===6)out.push('沖');if(HAI.some(pair))out.push('害');if(XING.some(pair))out.push('刑');if(SANHE.some(pair))out.push('半合');}
+  return out.join('');}
+const SUP=/比肩|劫財|正印|偏印/;
+function xj(r,g){if(r.str==='接近中和')return '';return ((r.str==='偏強')!==SUP.test(g))?'喜':'忌';}
+function yinDong(r,s,b){const pn=['年','月','日','時'],t=[];
+  r.P.forEach((p,i)=>{if(!p)return;const z=zhiRel2(b,p.b);if(z)t.push(pn[i]+'支'+z);});
+  const ce=(elOfGan(r.ds)+2)%5;if(r.P.some(p=>p&&p.b===KU[ce])&&b===(KU[ce]+6)%12)t.push('沖開財庫（窗口期）');
+  if(ganHe(s,r.ds))t.push('天干合日主');
+  if(ganHe(s,r.ds)&&zhiRel2(b,r.D.b).includes('六合'))t.push('天地鴛鴦合');
+  return t;}
+function godTag(r,g){const x=xj(r,g);return g+(x?`[${x}]`:'');}
+function upcoming(o,r){
+  const ds=r.ds,Y0=new Date().getFullYear(),lines=[];
+  const spouse=o.male?/正財|偏財/:/正官|七殺/;
+  for(let y=Y0;y<Y0+6;y++){const i=((y-4)%60+60)%60,s=i%10,b=i%12;
+    const t=yinDong(r,s,b);
+    if(spouse.test(tenGod(ds,s))||spouse.test(tenGod(ds,HIDE[b][0])))t.push(o.male?'見財星':'見官殺星');
+    lines.push(`${y}${GAN[s]}${ZHI[b]}（${godTag(r,tenGod(ds,s))}/${godTag(r,tenGod(ds,HIDE[b][0]))}；${t.length?'引動：'+t.join('、'):'無明顯引動'}）`);}
+  return lines.join('\n  ');
+}
+// 凶格與組合的觸發條件
+function patterns(r){
+  const ds=r.ds,items=[];
+  r.P.forEach((p,i)=>{if(!p)return;if(i!==2)items.push({g:tenGod(ds,p.s),i,k:'s'});items.push({g:tenGod(ds,HIDE[p.b][0]),i,k:'b'});});
+  const near=(a,b)=>a.i===b.i||(a.k===b.k&&Math.abs(a.i-b.i)===1)||(a.k==='s'&&b.k==='s'&&(a.i===1||a.i===3)&&(b.i===1||b.i===3));
+  const find=re=>items.filter(x=>re.test(x.g));
+  const touch=(A,B)=>A.some(a=>B.some(b=>near(a,b)));
+  const has=re=>Object.keys(r.tally).some(k=>re.test(k));
+  const out=[];
+  const sg=find(/傷官/),zg=find(/正官/);
+  if(sg.length&&zg.length){const t=touch(sg,zg);out.push(`傷官見官：${t?'緊貼':'隔位'}；${has(/財/)?'有財通關':'無財通關'}；${has(/印/)?'有印可化':'無印化解'}${t&&!has(/財/)&&!has(/印/)?'（三條件齊，需留意口舌與工作變動）':'（條件不全，不算凶）'}`);}
+  const py=find(/偏印/),ss=find(/食神/);
+  if(py.length&&ss.length){const t=touch(py,ss);out.push(`梟印奪食：偏印${t?'貼身':'未貼身'}；${has(/財/)?'有財星解救':'無財星解救'}；食神${r.str==='偏強'?'可能是用神':r.str==='偏弱'?'可能是忌神（奪食反而解脫）':'喜忌待定'}`);}
+  const bj=Object.entries(r.tally).filter(([k])=>/比肩|劫財/.test(k)).reduce((a,[,v])=>a+v.t+v.h*.5,0),cai=Object.entries(r.tally).filter(([k])=>/財/.test(k)).reduce((a,[,v])=>a+v.t+v.h*.5,0);
+  if(bj>=2.5&&cai>0&&r.str==='偏強')out.push(`比劫奪財的條件（身強比劫多${cai<=1.5?'、財弱':''}，合夥與借貸要謹慎）`);
+  if(has(/七殺/)&&has(/食神/))out.push('有食神可制殺（看食神是否有力、制得適度）');
+  if(has(/正官|七殺/)&&has(/印/))out.push('官殺與印同見（看官印/殺印相生中間這一步順不順、印有沒有被財破）');
+  // 官殺混雜
+  const pw=godPower(r);
+  if(pw['正官']&&pw['七殺']){const weak=['正官','七殺'].filter(g=>pw[g].lvl==='弱'||pw[g].fu);
+    out.push(`官殺混雜的條件：正官${pw['正官'].lvl}、七殺${pw['七殺'].lvl}；${has(/食神|傷官/)?'有食傷可制其一':'無食傷制'}；${has(/印/)?'有印可化':'無印化'}${weak.length?'；'+weak.join('、')+'力量弱或虛浮，影響有限':''}${!weak.length&&!has(/食神|傷官/)&&!has(/印/)?'（較可能真的成立，表現為內耗、兩套標準打架）':'（未必成立）'}`);}
+  // 羊刃駕殺
+  const REN={0:3,2:6,4:6,6:9,8:0};
+  if(ds%2===0&&r.Mo.b===REN[ds]){const jt=r.P.some((p,i)=>p&&i!==2&&tenGod(ds,p.s)==='劫財');
+    out.push(`羊刃格（${GAN[ds]}生${ZHI[r.Mo.b]}月${jt?'，劫財透干':'，劫財未透干（有些派別不算）'}）${pw['七殺']?`，見七殺（${pw['七殺'].lvl}）：具羊刃駕殺的條件，要刃殺相停、身強扛得住才成格`:'，未見七殺'}`);}
+  return out;
+}
+// 十神「有沒有力」：透干＋通根最強，透干無根為虛浮，藏支看本氣/中氣/餘氣，月令本氣最重
+function godPower(r){
+  const ds=r.ds,P=r.P,res={};
+  const elIn=(el)=>P.some(p=>p&&HIDE[p.b].some(h=>elOfGan(h)===el));
+  P.forEach((p,i)=>{if(!p)return;
+    if(i!==2){const g=tenGod(ds,p.s);const root=elIn(elOfGan(p.s));const o=res[g]=res[g]||{v:0,tou:0,fu:0,ling:0,cang:[]};o.v+=root?1.5:.5;o.tou++;if(!root)o.fu=1;}
+    HIDE[p.b].forEach((h,j)=>{const g=tenGod(ds,h);const o=res[g]=res[g]||{v:0,tou:0,fu:0,ling:0,cang:[]};const w=(j===0?1:j===1?.5:.3)*(i===1?2:1);o.v+=w;if(i===1&&j===0)o.ling=1;o.cang.push(['本氣','中氣','餘氣'][j]);});
+  });
+  Object.values(res).forEach(o=>{if(o.tou&&o.cang.length)o.fu=0;o.lvl=o.v>=2.5||o.ling?'強':o.v>=1.2?'中':'弱';});
+  return res;
+}
+function powerText(r){const pw=godPower(r);
+  return ['比肩','劫財','食神','傷官','偏財','正財','七殺','正官','偏印','正印'].filter(g=>pw[g]).map(g=>{const o=pw[g];
+    const d=[o.ling?'月令本氣':'',o.tou?(o.fu?'透干無根（虛浮）':'透干有根'):'只藏地支（'+[...new Set(o.cang)].join('、')+'）'].filter(Boolean).join('、');
+    return `${g}${o.lvl}（${d}）`;}).join('；');}
+
+function render(){
+  const o=read();$('custom').hidden=ps.value!=='c';
+  const dr=DST.find(r=>o.y>=r[0]&&o.y<=r[1]);
+  $('dstHint').hidden=!dr; if(dr)$('dstHint').textContent=`提醒：台灣 ${o.y} 年約在 ${dr[2]} 實施夏令時間。若生日在這段期間且出生證明登記的是當時時鐘時間，請勾選上方選項。`;
+  $('time').disabled=o.unknown;
+  const r=analyze(o); last={o,r};
+  const ds=r.ds;
+  $('pillars').innerHTML=pillarsHTML(o,r);
+  const t=r.t, sign=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(0);
+  $('meta').innerHTML=`<span>日主 <b class="e${elOfGan(ds)}">${GAN[ds]}${EL[elOfGan(ds)]}</b>　·　月令 ${r.ling}${r.deling?'（得令）':'（失令）'}　·　強弱粗估 ${r.str}　·　可能喜 ${r.xi}</span>`+`<span>出生地 ${o.place}</span>`+
+   (o.unknown?'<span>時辰未知，以中午估算年月日柱。</span>':`<span>真太陽時 ${String(t.h|0).padStart(2,'0')}:${String(Math.floor((t.h%1)*60)).padStart(2,'0')}（經度校正與均時差共 ${sign(r.offMin)} 分鐘${o.dst?'，已扣夏令時間 1 小時':''}）</span>`)+
+   (r.late?`<span>出生於晚子時，日柱依「${o.zi23?'23 點換日':'24 點換日'}」計算。</span>`:'')+
+   (r.nearJie<6?`<span class="warn">出生時間距離節氣交接不到 ${Math.ceil(r.nearJie)} 小時，月柱可能有誤差，請以專業萬年曆核對。</span>`:'');
+  const order=['比肩','劫財','食神','傷官','偏財','正財','七殺','正官','偏印','正印'];
+  $('gods').innerHTML=order.filter(g=>r.tally[g]).map(g=>`<span class="chip">${g} <b>${r.tally[g].t}</b>${r.tally[g].h?`<span style="color:var(--muted)">＋藏${r.tally[g].h}</span>`:''}</span>`).join('');
+  const tot=r.cnt.reduce((a,b)=>a+b,0);
+  $('bars').innerHTML=r.cnt.map((c,i)=>`<span class="e${i}" style="font-family:var(--display);font-weight:700">${EL[i]}</span><div class="bar e${i}"><i style="width:${c/tot*100}%"></i></div><span>${c}</span>`).join('');
+  $('yun').innerHTML=r.yun.map((y,i)=>`<div class="ycell${i===r.cur?' now':''}"><div class="g e${elOfGan(y.s)}">${tenGod(ds,y.s)}${xj(r,tenGod(ds,y.s))?`<span style="color:var(--muted);font-weight:400">·${xj(r,tenGod(ds,y.s))}</span>`:''}</div><div class="c">${cG(y.s)}<br>${cZ(y.b)}</div><small>${Math.floor(y.age)}歲</small><small>${Math.floor(y.year)}</small></div>`).join('');
+  $('yunNote').textContent=`${r.fwd?'順':'逆'}排，約 ${ageStr(r.startY)} 起運（實歲）。`+(r.cur>=0?`目前走第 ${r.cur+1} 步大運。`:'目前尚未起運。');
+  $('sample').hidden=!isSample;
+  // partner
+  const on=$('pOn').checked;$('partnerBox').hidden=!on;last.p=null;
+  if(on){const po=readP(),pr=analyze(po);last.p={o:po,r:pr};
+    $('ptime').disabled=$('punknown').checked;
+    $('ppillars').innerHTML=pillarsHTML(po,pr);
+    $('pmeta').innerHTML=`<span>${po.name||'對方'}日主 <b class="e${elOfGan(pr.ds)}">${GAN[pr.ds]}${EL[elOfGan(pr.ds)]}</b>　·　最多的十神 ${pr.top.join('、')}　·　日支 ${ZHI[pr.D.b]}</span>`+(!$('pdate').value?'<span class="warn">還沒填對方生日，目前是範例。</span>':'')+(po.unknown?'<span>時辰未知，時柱不論。</span>':'');
+    $('rel').innerHTML=relations(o,r,po,pr).map(x=>`<span>・${x.replace(/「(.+?)」/g,'<b>$1</b>')}</span>`).join('');}
+  $('prompt').value=buildPrompt();
+  save();
+}
+
+function flowYear(){const n=new Date();const c=chart({y:n.getFullYear(),m:n.getMonth()+1,d:n.getDate(),hh:12,mm:0,tz:8,lon:120,dst:false,male:true,zi23:true});return c.Y}
+
+function chartText(o,r){
+  const ds=r.ds, P=r.P;
+  const line=(p,i)=>{if(!p)return `${PN[i]}：時辰未知`;return `${PN[i]}：${GAN[p.s]}${ZHI[p.b]}　天干十神：${i===2?'日主':tenGod(ds,p.s)}　地支藏干：${HIDE[p.b].map(h=>GAN[h]+'('+tenGod(ds,h)+')').join('、')}`};
+  const same=[];P.forEach((p,i)=>{if(!p||i===2)return;const a=tenGod(ds,p.s),b=tenGod(ds,HIDE[p.b][0]);same.push(`${PN[i]}：${a}＋${b}`)});
+  if(r.D) same.push(`日支坐：${tenGod(ds,HIDE[r.D.b][0])}`);
+  const pos=[];['傷官','劫財','偏印','正印','食神','七殺'].forEach(gn=>{const at=[];P.forEach((p,i)=>{if(!p)return;if(i!==2&&tenGod(ds,p.s)===gn)at.push(PN[i][0]+'干');HIDE[p.b].forEach((h,j)=>{if(tenGod(ds,h)===gn)at.push(PN[i][0]+'支'+(j?'藏':'本氣'))})});if(at.length)pos.push(`${gn}在 ${at.join('、')}`)});
+  const has=gn=>!!r.tally[gn];
+  const combos=[['偏印','食神'],['偏印','七殺'],['比肩','食神'],['偏印','偏財'],['七殺','偏財'],['偏印','傷官'],['劫財','傷官']].filter(c=>has(c[0])&&has(c[1])).map(c=>c.join('＋'));
+  if(['正印','偏印','食神','七殺'].every(has))combos.push('正印、偏印、食神、七殺齊全（易內耗）');
+  if(['偏印','七殺','傷官'].every(has))combos.push('偏印、七殺、傷官齊全（反骨）');
+  const fy=flowYear();
+  const g=Object.entries(r.tally).map(([k,v])=>v.t?`${k}${v.t}${v.h?'(另藏'+v.h+')':''}`:`${k}(僅藏${v.h})`).join('、');
+  const cy=r.cur>=0?r.yun[r.cur]:null;
+  return `${o.name?`稱呼：${o.name}\n`:''}性別：${o.male?'男':'女'}
+國曆生日：${o.y}年${o.m}月${o.d}日 ${o.unknown?'時辰未知':String(o.hh).padStart(2,'0')+':'+String(o.mm).padStart(2,'0')}${o.dst?'（夏令時間）':''}，出生地：${o.place}
+${o.unknown?'':`真太陽時：${String(r.t.h|0).padStart(2,'0')}:${String(Math.floor((r.t.h%1)*60)).padStart(2,'0')}\n`}${P.map(line).join('\n')}
+日主：${GAN[ds]}（${EL[elOfGan(ds)]}）
+月令（月支本氣）：${r.ling}，${r.deling?'得令':'失令'}
+日支（夫妻宮）：${ZHI[r.D.b]}，本氣${tenGod(ds,HIDE[r.D.b][0])}
+最多的十神：${r.top.join('、')}
+日主強弱粗估：${r.str}（依得令、得地、得幫扶加權，比劫印約占 ${Math.round(r.ratio*100)}%；粗估喜用：${r.xi}。僅供參考，請依全局自行判斷）
+命盤特徵：${extras(o,r).join('；')||'無特別標記'}
+十神力量（有沒有力）：${powerText(r)}
+組合的觸發條件：${patterns(r).join('；')||'無'}
+各柱十神組合：${same.join('；')}
+十神數量（天干＋地支本氣，另計藏干）：${g}
+重點十神位置：${pos.join('；')||'無'}
+命盤中出現的組合（含藏干，透干者影響較大）：${combos.join('、')||'無明顯組合'}
+五行數量（天干＋地支本氣）：${EL.split('').map((e,i)=>e+r.cnt[i]).join(' ')}
+大運（${r.fwd?'順':'逆'}排，約${ageStr(r.startY)}起運）：${r.yun.map(y=>`${Math.floor(y.age)}歲${GAN[y.s]}${ZHI[y.b]}(${tenGod(ds,y.s)})`).join('、')}
+目前：實歲約${Math.floor(r.ageNow)}歲，${cy?`正走 ${GAN[cy.s]}${ZHI[cy.b]} 大運（天干${godTag(r,tenGod(ds,cy.s))}、地支${godTag(r,tenGod(ds,HIDE[cy.b][0]))}；${(t=>t.length?'引動：'+t.join('、'):'與原局無明顯合沖')(yinDong(r,cy.s,cy.b))}）`:'尚未起運'}；今年流年 ${GAN[fy.s]}${ZHI[fy.b]}（天干${godTag(r,tenGod(ds,fy.s))}、地支${godTag(r,tenGod(ds,HIDE[fy.b][0]))}）
+未來流年（[喜][忌]依粗估強弱，僅供參考）：
+  ${upcoming(o,r)}`;
+}
+
+function buildPrompt(){
+  const {o,r,p}=last;
+  const q=$('q').value.trim()||(p?'我們兩個合不合？彼此在對方眼中是什麼角色？常會卡在哪裡、該怎麼相處？':'我最近很迷茫，想知道自己是什麼樣的人、現在處在什麼階段、接下來該往哪裡走。');
+  return `你是一位實戰經驗豐富、很懂人心的八字命理師。看過非常多人的命盤，也陪過很多人走過低潮。現在坐在你對面的人感到迷茫，他需要的不是一堂命理課，而是看懂自己，知道下一步怎麼走。
+
+【說話原則】
+1. 用簡單明白的白話，像一位可靠的長輩或朋友在聊天。術語能不用就不用；非用不可時，順手用一句白話說明。
+2. 不要賣弄技巧：不堆格局名詞、不展示推算過程、不引古書。結論先講，理由一兩句帶過就好。
+3. 不賣恐懼，也不說假話：命盤看到的困難和課題要誠實講清楚，不粉飾、不為了讓他開心硬說好話；但每說一個難處，就給他看得見的應對方法。只說命盤真正支持的事，不硬湊、不恐嚇、不宿命。命盤是天生的傾向，不是判決。看不準或資料不足就直說。
+   絕不建議做法事、補財庫、買開運物或任何付費化解；有人這樣說，請他謹慎看待。
+4. 每個判斷都要落到生活裡看得見的樣子：他可能常有的感受、在工作或關係裡常見的狀況，讓他讀了會覺得「對，就是我」。
+5. 建議要具體、做得到，最好這個月就能開始。
+6. 不做醫療、法律、投資的具體指示；不預言疾病、手術、血光、意外或親人健康出事，最多溫和提醒多照顧身體、多關心家人；不說「投資必虧」「一定有第三者」這種話。若他透露身心狀況很糟，溫柔地建議他找信任的人或專業協助。${o.unknown?'\n7. 時辰未知，時柱不論；與子女、晚年、內心深處相關的判斷要保守。':''}
+
+【看盤方法】（你心裡要這樣看，但不用說給他聽）
+・先看全局，再談十神：先判斷日主強弱與喜用忌神（月令最重要），再看五行流通、十神之間的生剋制化與格局，最後才套用下面的十神觀點。單一個字沒有吉凶，組合起來才定高低。
+・同一個十神，喜忌不同結果就不同：財星在身強有根時是財富，身弱時反成壓力與奔波（財多身弱）；七殺有食神制或印星化，壓力會轉成魄力與權威，無制才是波折；印星是喜神時，讀書進修是助力，若是忌神，學歷越高反而越挑剔、越難親近伴侶（印克財），早點進社會歷練反而好。
+・斷運四法則：①先分喜忌再斷吉凶：十神吉凶不看名字，只看對命格是幫助還是消耗；同樣是財星，身強發財、身弱破財；同樣是官星，身強升職、身弱壓力是非。②重組合不重單星：傷官見官、梟印奪食、比劫奪財都有觸發條件，不要看到名詞就下結論。③流年靠引動才應驗：流年和原局發生合、沖、刑、害、伏吟，事情才會落地；沒有引動只是氣場浮動，不要說得太重。④命理是趨勢不是定數：知運、改心、修德、慎行，就能趨吉避凶。
+・「有沒有」和「有沒有力」要分開：天干與藏干出現就算有，但力量差很多。看力量四件事：月令本氣最大（不透也很強）；透干又通根最有力，只透不根叫虛浮，只藏不透看本氣或餘氣；有沒有被合、被沖；旁邊有沒有被制化（食神制、印化，七殺會溫和很多）。大運流年也會把藏著的十神引出來，所以有人某幾年特別有感。十神的典型描述，是那個十神有力又沒被制時最明顯，力量越大越像；力量弱就要說「有一點這樣的傾向」。網頁有計算各十神的力量。
+・先天格局改不了，破格就是破格，要誠實；能動的是兩件事：運勢時機，和後天的做法。所以談格局一定要接著講「哪幾年會比較輕鬆」和「平常可以怎麼做」。
+・凶格的真正條件：傷官見官要「傷官與正官緊貼交戰＋無財通關＋無印化解」三者齊全才算，隔位、有財通關、或傷官是用神就完全不凶。梟印奪食要「食神是用神＋偏印貼身強克＋無財星解救」三者齊全；若食神本來是忌神，被奪反而是解脫。網頁有自動檢查這些條件。
+・官印要看中間的作用：正官為用，要看它有沒有做對事（比劫旺、需要約束時，官有根有力才有用；身已弱官又重，就要看有沒有印來承接）。印星得力要看有沒有根、能不能生身、有沒有被財破，而不是數有幾個印。官印相生是「官生印、印生身」，官強印接不住，或官弱印過重，都不能只憑官印齊全說好。七殺有制化分兩路：食神制殺（重點在食神有力、制得適度），印化殺（重點在印得用、路徑順）。
+・三個容易看反的地方：傷官旺但身弱，可用印制傷生身（傷官配印），不能直接貼上「不服管」；財克印要克壞的是所需之印才叫壞，身強印重反而喜財來制印；比劫重而官殺能制，反而適合組織、管理，不能直接斷成「只能創業」。記住順序：先看命局需要什麼，再看誰在起作用，最後查這條關係有沒有被破壞。學業不只看印，身強喜食傷時，可從學習技術與表達去理解。
+・判斷強弱三步：得令最重要（月令是否生扶日主），得地次之（地支有沒有根：本氣根最強、中氣次之、餘氣再次；日支最貼身，影響僅次於月令），得幫扶再次之（天干有無比劫印，月干、時干最直接）。
+・取用神先用抑強扶弱：身強財弱，用食傷洩秀生財；身弱財強，用比劫幫身（也可用印護身）。再配合印星、官殺、調候靈活判斷，不要死守公式。從格等特殊格局另論。
+・看大運流年：它是幫用神還是幫忌神，有沒有用合、沖、刑、害打破原局的平衡。財運、事業、學業、婚姻都照這個邏輯推。
+・身強多半來自比劫重或印重。比劫重的人主體性很強、好勝、體力好，通常喜歡官殺、食傷來制衡消耗，再補比劫印反而不舒服（特殊從格除外）。網頁提供的強弱只是粗估，請你自己判斷。
+・古法要貼合現代生活：現代社交開放，比劫代表的同輩異性也是緣分。官殺的緣分有層級差（對方較強、有掌控和責任，偏傳統婚戀）；比劫的緣分是平起平坐、圈子相同、像朋友夥伴，好處是懂彼此，隱憂是暗中比較。桃花不在日支（夫妻宮）多半只是人緣好，不必說成爛桃花。
+
+${p?`【合盤怎麼看】（有另一半資料時）
+・先各自看懂兩個人：用「最多的十神」對照下面的十神戀愛方式，說出彼此常被誤會的地方和真正愛人的方式，讓他拿到對方的「愛情說明書」。
+・看彼此的角色：對方日主是你的什麼十神，代表你在關係裡怎麼看待他（例：對方是你的正官，你會把他當依靠也會在意他的評價；是你的傷官，你會忍不住想糾正他）。再看日支合沖：六合、半合是默契，六沖是步調常不一樣、需要磨合，相害是容易有說不出口的心結。五行互補是加分。
+・看現在的時機：兩人目前的大運流年，誰正忙、誰正在變動，會影響相處。
+・合盤不是判決：不要說「你們不適合」「一定分手」「克夫克妻」，而是說清楚哪裡容易卡、怎麼相處更順。只聽一方的說法，不要替對方下負面定論。
+
+`:''}【看盤參考】（資深命理師的經驗觀點，以命盤實際狀況為準，不必逐條套用）
+・月令是整張盤權力最大的位置，像出廠設定，一輩子的底味改不掉，也定了人生方向的基調（月令財對錢敏感、月令官愛管人追地位）；月令也反映小時候的家庭環境與父母的影響。
+・月令也是一個人骨子裡最放不下的執念，也是這輩子的修行課題（月令為何，請依命盤資料）：
+  財：放不下錢、得失與安全感，怕窮怕努力落空；功課是在得失之外找到自己的價值。
+  官殺：放不下責任、面子、地位與被認可，怕讓人失望、怕不夠好；功課是放下被定義的束縛，在規則之外活出自己。
+  印：放不下安穩、被接納、有人兜底，怕變動、怕孤單；功課是成為自己的港灣。
+  食傷：放不下自由、表達、興趣與被理解，寧可孤獨也不將就；功課是接納世界的邊界，在現實框架裡安放熱愛。
+  比劫：放不下情義、自尊、輸贏與身邊的人，可以吃苦但不能丟面子，怕被背叛；功課是守住自我邊界，不在關係裡把自己弄丟。
+・日支是夫妻宮，代表他心裡給另一半安排的位置：坐官殺，希望對方強勢可靠、能讓自己心服；坐印，喜歡像前輩導師、會照顧引領自己的人；坐食傷，自己想當主導，在意對方有沒有眼力、懂不懂上進與給情緒價值；坐財，重視對方的實際付出與經濟貢獻；坐比劫，另一半是並肩作戰的夥伴，但若盤中比劫已多，再坐比劫容易給自己添堵。
+・十神的戀愛方式（看哪種十神最多，4 個以上更明顯；先講他常被誤會的地方，再講他真正愛人的方式）：
+  正財：被誤會不浪漫、愛算錢；其實需要看得見的安全感，浪漫是默默存錢、把你規劃進長遠人生。
+  偏財：被誤會不專情、對誰都大方；其實樂於分享、講效率，認定你就全力付出，別限制他的自由。
+  正官：被誤會無聊、一板一眼；其實自律負責，答應的事一定做到，最長情的告白是陪伴與扛起家。
+  七殺：被誤會兇、掌控欲強；其實是護短的霸道，你受委屈時第一個衝出去擋，不會甜言蜜語但天塌了會頂著。
+  食神：被誤會沒上進心；其實靠感受活、討厭衝突，愛你是把生活小確幸都帶給你，被逼著賺大錢會很痛苦。
+  傷官：被誤會挑剔、看你不順眼；其實追求完美與靈魂共鳴，挑剔是因為急著想讓你更好，愛得熾熱，別用上對下的權威管他。
+  正印：被誤會沒激情、溫吞；其實情感內斂，靜水深流地照顧你，給他安穩，他就是溫暖的歸屬。
+  偏印：被誤會忽冷忽熱；其實是天生觀察者，需要獨處充電，最高境界是懂你的沉默，別連環追問在想什麼。
+  比肩：被誤會不需要愛、太獨立；其實要的是並肩作戰、各自獨立又互相扶持，給足面子，他會挺你到底。
+  劫財：被誤會花心、對朋友好到沒界限；其實四海之內皆兄弟，愛上就是「我的就是你的」，連你的家人一起愛。
+  感情裡的痛苦常來自用自己的方式要求對方，忽略了對方原本的「出場設定」。
+・十神的快樂來源：正印是學習與助人；偏印是探索玄學、獨處悟道；正財是累積與穩定；偏財是把握機會、冒險投資；食神是美食與展現才華；傷官是自由表達與創新突破；七殺是挑戰極限；正官是恪守職責、維護秩序；比肩是交朋友、互助合作；劫財是競爭與贏。
+・正印是靠山、學歷、貴人和媽媽，是不用拚就有人罩的福氣。五行不同氣質不同：木正印溫暖、靠文化教育；火正印敞亮、靠口才人緣；土正印穩重、靠可靠踏實；金正印剛正、靠原則骨氣；水正印通透、靠腦子悟性。
+・日支有兩派看法：一派看另一半的特質，一派（盲派）看自己進入婚姻後的相處狀態。兩者都可參考，但單看一宮只是淺層，感情一定要配全盤。
+・日支看感情裡的相處方式：未，把對象當家人照顧，細心有責任感；亥，特別包容，願意聽對方安排，不斤斤計較；卯、戌，非常護短（戌可能沒耐心），絕不讓外人欺負自己人；申，像朋友一樣愛聊天分享玩鬧；巳，很會解決問題，大小事都願意幫你扛；寅，捨得付出，願意為對象花錢花時間。
+・日支地支看伴侶或自己在關係中的樣子（僅參考，要配全盤）：日支巳、申、寅、子，閒不住、常年忙碌，不是忙事業就是忙玩樂，其中申、寅、巳還特別鮮活有趣；日支午、亥、戌，有趣浪漫、很會製造氛圍；日支丑，心思深沉有謀略，骨子裡有大佬潛質。
+・印給的資源多半不是現金，而是一個安排好的位置（房子、工作、平台）。正印的安排體面，常以穩定、學歷、編制、「為你好」的形式出現；偏印的安排更隱形，給資源同時讓人有虧欠感與依賴感。印為喜時能被托舉、少走彎路；印過旺為忌時，容易被保護得很好，卻遲遲建立不了自己的判斷，還會壓住食傷，讓人隱忍、悶著說不出口，身邊人對他好卻不是他想要的。這時建議他練習表達與自己做決定。
+・財星多不多怎麼看：正財＋偏財（天干與藏干都算）合計 3 個以上可初步看作偏多，1～2 個不算多，天干地支藏干都沒有才算真正無財星。透干與藏支力量不同，不能只看數量。無財星不等於無財運；藏而不透是有財但不顯，也不代表一定能存錢。財也代表現實慾望、物質享受、佔有欲與想掌控的資源，不是越多越好：身強財為喜，財多是目標強、機會多、能駕馭資源；身弱財為忌，是想得多、看得到接不住、求財辛苦、財來財去，可能重享受、衝動花錢或執行力不足。財多身弱不是賺不到錢，而是容易留不住、賺得更累，重點是學理財、建消費規劃、提升自己的承載力。還要看有沒有食傷生財、比劫奪財、官殺護財。
+・財庫：辰戌丑未為四庫，有財無庫錢財難守，有庫無財空守一生；財庫是先天的容器，不會自動裝滿，要抓住窗口期、踏實行動。各日主的財庫與開庫鑰匙（被沖開的時機）：甲乙木庫在戌、鑰匙辰；丙丁火庫在丑、鑰匙未；戊己土庫在辰、鑰匙戌；庚辛金庫在未、鑰匙丑；壬癸水庫在戌、鑰匙辰。口訣是死的、人是活的：有的原局有鎖，強行沖庫反而耗財；有的原局自帶引動，不用沖也能進財。
+  財庫落在哪一柱，聚財方式不同：年柱，機會多來自前輩、年長貴人、外地與跨區域，要多維護前輩與行業人脈，在財星到位的年份往外拓展，最怕原地不動；月柱是事業財庫，財富來自生意、市場、主業，適合創業、自由業、業務，困在死板的崗位難施展，平時觀察行業、累積資源，窗口期擴張，不在窗口期就穩紮穩打，和同輩合夥金錢要白紙黑字；日柱（日坐財庫）錢貼著自己走，中年後家底越來越厚，日支也是夫妻宮，伴侶常是財富路上的重要助力，夫妻同心一起打拼；時柱是厚積薄發，代表晚年、副業、團隊與子女，晚年資產可來自長線投資與副業。這些是有利的底子，不是保證，不要說「這輩子不可能缺錢」。
+・四柱的人生階段（約略）：年柱 0–16 歲，祖上、根基、早年環境；月柱 17–32 歲，父母、兄弟、成長、事業起步；日柱 33–48 歲，自己、配偶、婚姻、中年；時柱 48 歲以後，子女、晚年、未來歸宿。旺衰判斷順序：月令（提綱）＞地支根氣＞天干透出＞生剋制化。
+・財運口訣（給方向用，不可當投資建議）：四柱有財，衣食不缺；財藏在地支較豐厚，財透天干的人為人大方；有財庫（辰戌丑未中收財的那個）賺了能存住；財是官的源頭，無財難有官貴；身旺財旺為福，再帶官殺更好；身弱財多，要靠印或比劫幫身才扛得住，否則錢多反成壓力；時干偏財、別處不見，也是好配置。
+・流年十神喜忌速查（流年天干/地支是哪個十神，再看它是喜是忌）：
+  正財：喜時主業穩、加薪，男命容易遇到適合結婚的正緣；忌時財多壓身、看得到賺不到、賺錢辛苦存不住，容易因錢有感情矛盾。
+  偏財：喜時副業、額外收入、機會多，男命異性緣旺（已婚要守邊界）；忌時來得快去得快，衝動投資容易被套。
+  正官：喜時被賞識提拔、考證上岸，女命容易遇到穩重的正緣；忌時壓力、管束、挑剔變多，身心疲憊。
+  七殺：最能翻盤也最容易翻車。喜時（身強制殺、殺印相生、食神制殺）氣場全開、適合突破瓶頸、帶隊開拓；忌時（身弱殺旺無制）高壓焦慮、小人口舌、突發壓力，要多放慢、多照顧自己。
+  食神：喜時心態鬆弛、靠技術口才創意賺錢、新計畫落地；忌時思慮過度、說話無心傷人、容易放縱熬夜。
+  傷官：喜時才華被看見，適合變現、出圈、靠專業接案，女命魅力大增；忌時急躁張揚、不服管、口舌是非，學生容易心態崩，女命易和伴侶爭吵。
+  正印：喜時有人兜底、考運進修佳、適合買房搬家換環境、修心學習；忌時想太多拖延、長輩干預束縛，看似安穩實則停滯。
+  偏印：喜時直覺準、洞察力強，適合命理、心理學、小眾技術，容易得隱性貴人點撥；忌時孤僻多疑、計畫反覆、三分鐘熱度、精神內耗。
+  比肩：喜時人緣好、團隊助力強、有人分擔；忌時同行內卷、資源被分走、攀比心態失衡，感情上留意競爭者。
+  劫財：喜時危難有人相助、適合抱團攻堅；忌時人情破財最多，謹慎借錢、作保、合夥。
+・合不合適合夥：不適合的三種：身強比劫為忌（一人做主最順，合夥容易理念相爭、錢沒賺到朋友也傷）；傷官旺又無制（想法多但很難遷就，容易長期爭吵）；身弱官殺重（自己已被壓力拖累，合夥會疊加責任與糾紛，容易被拖累背責）。適合合夥的：身弱喜比劫幫扶，或官印相生的格局，有夥伴互補資源、有人托舉，可以借力成事。命理的價值不是預判暴富，而是幫人守住本金。
+・養運方式（給生活建議很好用）：身弱靠乾淨養運（居住乾淨、生活規律）；印重多慮靠安靜養運（少熬夜、少胡思亂想、家裡安靜整潔）；食傷旺靠鬆弛養運（少較真、少糾結小事）；官殺重靠規律養運（生活自律、作息穩定、家裡有序）；比劫旺靠清淨養運（少無效社交，守住自己的福氣財氣）。
+・女命幫扶娘家或婆家（只在他問到時才談）：印星、比劫力量強，多半心向娘家；官殺、財星力量強，多半為婆家與丈夫付出；官印相生的女命責任心很重，通常兩邊都顧，印重偏娘家、官強偏婆家；殺印相生看印根落位，在年柱偏娘家，在月日偏婚姻與夫家，同時參考財星流向。都不是絕對，要看力量強弱，也不要替他下道德評價。
+・什麼時候容易有好姻緣：大運流年與原局形成財官或桃花的合局，又見異性星（男看財、女看官殺）；流年與日柱天干相合、地支六合（天地鴛鴦合）；喜神當值的流年；歲運與原局干支相合多，或合化成喜用。說時機時用「比較容易出現」「適合把握」，不要說死。
+・身弱的人（不分男女）在感情裡特別要選不消耗自己的人：身弱見官殺多，壓力容易來自親密關係，一段不適合的感情會掏空情緒、打亂生活。這時真正托住他的，常是比劫，也就是閨蜜、同窗、志同道合的朋友與同路人。可以提醒他不必急著向外界證明自己能戀愛成家，但不要叫他不要談戀愛，也不要用「業力」嚇他。
+・倒吃甘蔗：官殺偏重、印星偏弱的人，年少缺庇護、磨難多，什麼都要自己扛；等到中晚年走到印星得力的運，殺印相生，以前的壓力都變成閱歷、定力和眼界，越老越值錢。早年吃苦只要不丟本心，苦難就是磨刀石。反過來，少年太享福、早早透支福報，要提醒他趁早累積。
+・殺印相生的三個條件：殺要夠旺（太弱起不到壓力變動力的效果）、印要貼身（月干、時干、日支，太遠來不及化）、身要能扛（日主有根）。不是有殺有印就算貴格。
+・聰明的八字常見：官印相生或印星透出，學得快、抓得住重點、有自己的見解；木火通明，腦子快、表達好；金白水清，邏輯清楚、心思細膩；日坐七殺為用，遇事不慌、越複雜越能找到解法；身旺帶將星，專注有主見、能鑽研到底；金水食傷成格，悟性高、想法多、能把複雜的事講明白。但都要看身強身弱，不是見到金水就代表聰明。
+・感受力強的人（癸水、乙木、丁火等陰干日主，或身弱食傷旺）：優勢是強感知力，但在低品質環境裡反成劣勢，越能感知別人的情緒越容易被牽扯、被推責任，想獨處保護自己還會被說不合群。建議他向上流動，換到能滋養自己的環境。乙木身強的人共情力太強，容易承接身邊人的情緒包袱：慈悲不等於要接管別人的課題，把能量留給同頻向上的人。
+・值得深交的人：印星重最靠譜（心軟、包容、不玩套路，終身貴人型朋友）；正財旺最厚道（守信、踏實、不貪）；正官透干最端正（自律、有底線，能托舉你）；食神旺最治癒（樂觀通透，靠近他會越來越鬆弛）。
+・五行怎麼補：補之前先弄清楚兩件事。第一，缺的那個五行對他是喜是忌：八字看的是格局與喜忌，有些格局缺某個五行反而是好的，硬補是自找罪受，所以只補喜用，不要看到缺什麼就補什麼。第二，要補的是狀態，顏色、飾品、改名這些外在調整效果有限。五行是五種狀態：木是向上生發，需要木就去生發破局、連結人脈，練毅力與短時間專注；火是向外擴散，需要火就曝光自己、創造被看見的機會，上台表達、主動社交、做讓心跳加速的事；土是向內兼容、承載轉化，需要土就把想法落地、說到做到，並找能穩定情緒的習慣（太極、書法、冥想）；金是收束決斷，需要金就練習切割消耗你的人事物、該出手時出手，有勝負的團體運動也有幫助；水是向下沉澱、沉得住氣又保有彈性，需要水就讓自己不要那麼固化僵化，多讀歷史哲學科學，看透本質。
+・正官：在月柱容易在社會上擔任領導、有責任心；在日支有組織領導力。正官多的人愛操心、勞累，交友謹慎、朋友少而正派，太多會變得固執、凡事要求完美，一生重名譽地位。完全沒有正官的人不喜被約束、我行我素，較難嚴格要求自己。女命官星弱的人姻緣可能來得晚，要看大運，不必說得太絕對。
+・比劫重的人好勝、愛比較、體力好，適合運動或競爭型的工作，跌倒了會再站起來。比肩比較單純，有主見又不激進，容易得到同輩幫助；劫財像鏡子裡的另一個自己，常覺得錢存不住、被很多手搶。劫財重的人錢是花出來、賺出來的，不是省出來的，花在能讓自己升級、讓更多人受益的地方，反而能賺得更多。
+・十神像人的身體：比劫是眼睛（自信、怎麼看待競爭）；食傷是嘴巴（表達、行銷自己）；財星是手腳（勤快、執行力、錢袋深淺）；官殺是胃口（志氣與能扛多少）；印星是心（愛人之前先愛自己）。
+・印星偏向忍耐、吸收；食傷偏向宣洩、輸出。兩者的平衡常是情緒問題的關鍵。
+・偏印：最特別的十神。喜歡冷門、有難度的東西，能一個人鑽研很久；直覺準、會看人、也會記仇；常有說不出的孤獨感，未必是六親緣淺。功課是獨立堅強、不把自己關起來。
+・七殺：正義感強，看不慣不公平，硬忍久了會內傷。帶七殺的人多半很能忍，外表風平浪靜，內心早已波濤洶湧；遭遇不公時不太為自己發聲，而是默默無聲地離開。功課是聰明地表達不滿、守住底線，但不失控。七殺有力又在年柱或月令的人，面對主管老闆可能有莫名的壓迫感和焦慮。
+・傷官見官（成立時）：傷官是才華、「我知道怎麼做比較好」；正官是規矩、體制、打卡簽核。能力擺出來大家都服，說話方式和做事狀態卻讓人不敢恭維；換過幾份工作，原因多半是對上層不滿、不認同制度。古訣：傷官旺而無財印不能見官；財可化傷生官（傷官生財、財生官，通關）；印可制伏傷官（傷官配印）。後天化解：練印的「先想再說、先聽再說」，練財的「動手做，把才華先換成結果，再拿結果去談」。走印運比較願意先聽，走財運會先做出成績。能力一流、口才好，但情緒與狀態要留意。點破時要溫和，不要像在指責他（直接說他會跟主管衝突，他可能當場翻臉）。
+・官殺混雜（成立時）：正官講道理、照 SOP；七殺直接、要你馬上交，就像頭上有兩個主管。成立要兩個都有力，沒有被制掉或合走、也沒有印化；其中一個虛浮無根，影響就很有限，查到兩個都有先不用緊張。真的成立的人最明顯是內耗：同一件事用兩套標準各想一遍，答案常相反，決定了還回頭想另一條路，職場上常被說想太多、容易自責。網路上「女生官殺混雜就是爛桃花、會離很多次婚」是跳太多步，感情要看全盤，絕不能這樣斷。調整：身強的人走食傷運去掉其一（去官留殺、去殺留官）會輕鬆；身弱的人靠印把壓力轉成資源，走印運會輕鬆。後天盡量選權責清楚的環境，懂得開口求助，不要一個人悶頭苦幹。
+・羊刃駕殺：羊刃是陽日主氣最旺的月份（甲生卯月、丙戊生午月、庚生酉月、壬生子月，多數說法要天干透劫財），七殺就是制住這股刃的東西，像刀與握刀的手。成格要日主旺到扛得住七殺、刀跟手力量差不多（刃殺相停）；七殺太重是被壓著打，刃太重殺太輕是手握不住刀。表現：遇到壓力先想怎麼接，場面越亂越清楚，常出現在要拍板的位置，常被說太衝、太硬；太順太閒沒對手時反而煩躁苦悶，力氣容易轉成強勢急躁與控制欲。調整：這股力氣用在事上不要用在人上，幫它找個夠難的對手（有挑戰的專案、需長期練的運動、別人不想碰的麻煩事），最怕讓它閒著，刀會轉向伴侶、同事、家人。發脾氣前問自己：我想把事情解決，還是想贏過這個人？想解決就去衝，想贏人就先把話吞回去，出門打場球。羊刃駕殺的人不怕壓力大，怕沒事做。
+・印旺為忌的人：印是輸入、接收、內化，過旺時腦袋一直轉，小事想成很多種可能，還沒發生就先擔心到睡不著，最常被說想太多。所以命盤很多印卻感覺不到貴人：貴人給了一兩次機會，他想太多沒行動，貴人就慢慢離開了。化解方向不是少想而是多做，越具體越好：①把想的寫下來或說出來，腦袋轉十圈不如寫成三行，很多擔心寫出來就站不住；②限制輸入，一件事最多問 1–2 個信任的人，問完就決定；③用身體去做，運動、把拖很久的小事收掉（財能壞印，這裡的財就是實際行動與結果），一件事真的做完了，腦袋才會安靜。
+・劫財的日常樣子：朋友開口借錢很難說不，借出去很爽快，要不要得回來另一回事；朋友一通電話手邊事可以先放下，家人會唸怎麼對外人比對自己人好；不太甘願只領一份死薪水，常盤算還能多做什麼；到新環境很快混熟、稱兄道弟。劫財常被說是破財星，其實他們的錢很多花在人身上，人脈也是這樣養出來的。
+・丁火（日主或盤中丁火有力）的日常樣子：剛認識話很少，熟了才講心裡話，常被說慢熟；對自己人很捨得，朋友隨口提過想吃什麼會記得帶給他；很在意禮貌，對方不說謝謝、講話沒分寸，嘴上不講心裡默默扣分；做決定前想很久，會比價、先問身邊的人；愛恨分明，被劃到另一邊就很難再回來；惹到丁火，反撲很猛烈。
+・傷官：善溝通、點子多、懂趨勢、個性多變，容易因說話直而得罪人。功課是學會行銷自己。
+・食神：細膩講究、重品質、慢工出細活，對吃與生活品味挑剔。功課是保持品質，不流於放縱。
+・偏印＋食神：興趣特別而有深度，遇事冷靜、能旁觀；需要安靜、獨處、精進自己的空間，要照顧好自己的內在小孩。
+・偏印＋七殺（同柱更明顯）：有一種不好惹的疏離氣場，其實冷面熱腸、很護自己人；格局大、人生戲多，但很累。
+・偏印＋傷官：觀察力強又能帶動局面，容易成為看懂局勢、順勢出手的人。
+・偏印、七殺、傷官集中在月、日、時柱：天生反骨，自己就是自己的老師，對他少下指導棋，多給選擇。
+・劫財、傷官重：容易因自己的脾氣或衝動惹麻煩。
+・正財重有進有出；偏財重開源節流；正官要表裡如一；七殺可以敢愛敢恨；正印要學會愛惜自己。
+・壬水日主重自由、腦袋停不下來，土少的人往往坐不住辦公室；土多的人像被框住，有志向卻困在固定體制。癸水日主像雲與雨，善變難捉摸，也很會照顧、指點身邊的人。日支為辰的人通常把自由和興趣放第一。
+・每個十神都有好壞兩面，要看他用在哪一面：比肩好是自信、壞是太自我；劫財好是會說、壞是愛鬥；食神好是懂品味、壞是太挑剔；傷官好是懂門路、壞是只想曝光；正財好是會存、壞是太摳；偏財好是會投資、壞是貪多；正官好是形象好、壞是推責任；七殺好是有魄力能經商、壞是硬撐面子；正印好是感性體貼、壞是聖母心；偏印好是有悟性、壞是傲嬌。
+・印星是兩面刃：正印像媽媽，對在乎的人百般呵護，容易過度付出、玻璃心，功課是先愛自己、拒絕聖母心（日柱甲子、乙亥、戊午、己巳或日支本氣為正印者特別明顯）。偏印一旦討厭一個人就記仇、斬斷無謂社交，帶著高傲，專注在自己身上。
+・正印、偏印、食神、七殺都多的人容易內耗：正印只對愛的人好、偏印只讓自己悟、食神挑剔又不擅表達（口是心非、嘴是對內用的）、七殺看起來兇但重義氣能扛事。提醒他別自找麻煩、別過度講義氣。
+・偏印＋食神：學習效率高、看事通透，容易進入心流；怕吵、愛獨處、做好份內事；也容易被認為高傲、難懂，對聽不懂的人很不耐煩。建議他不必在意合不合群，專注精進、學習、享受，並遠離消耗自己的人。
+・劫財用在工作上是社交力和說服力（業務、仲介、講師、命理師）；沒用在工作就變碎念、控制、愛吃醋。傷官用在事業上是行銷、曝光（自媒體、藝人、網紅、從政）；沒用在事業就愛吵、愛爭、唱反調。兩者若在日支（如日柱甲午、乙巳、丙午、丁巳、庚子、辛亥、壬子、癸亥），感情關係較不穩定。傷官、劫財多的人凡事都想反駁，最好給自己找件正事做。
+・傷官的位置：在年干，想與眾不同、想出頭；在月干或時干，適合行銷、公關、能展現才華創意的工作；只藏在地支沒透出，容易覺得想做的不能做、想表現沒人懂，久了變得叛逆、負面。傷官多的人好動、學得快但專注力短，像電池隨時滿電又想放電；癸水日主再配滿傷官，更容易分心、忘東忘西。這只能說是性格傾向，不可當成醫療診斷；若他本身困擾，建議找專業評估。
+・常見強力組合：偏印＋食神，想學什麼都不難，聰明而自負，但偏印太重會壓制食神（梟印奪食），反而卡住表達與享受；偏印＋七殺，很能隔絕爛人爛事，臉常被當臭臉，生人勿近；比肩＋食神，獨處自在、做自己開心就好，不在意別人怎麼看；偏印＋偏財，看標的的眼光好，適合研究型投資，弱點是漲跌時抱不住；七殺＋偏財，天生創業家格局，忙碌、志向大，很難長期在別人底下做事。
+・十神的使用方式（給建議時可直接用）：比肩用來增強自信，劫財用在社交人脈；食神用在內省學習，傷官用在工作手段；正財用在務實本業，偏財用在可控風險；正官用在紀律原則，七殺用在創業生意；正印的愛用在愛的人身上，偏印的傲用來提升自己。
+・各十神的生活樣貌（可用來舉例讓他有共鳴）：比肩想吃什麼就吃；劫財覺得人多才熱鬧；食神相信自己點的最好吃；傷官吃前先拍照分享；正財嫌太貴要省；偏財大方請客；正官要體面的地方；七殺只要好吃就好；正印等大家到齊才動筷；偏印嫌吵想換桌。
+
+【命盤資料】
+${chartText(o,r)}${p?`
+
+【另一半的命盤】
+${chartText(p.o,p.r)}
+
+【兩人關係（網頁自動計算，供參考）】
+${relations(o,r,p.o,p.r).join('\n')}`:''}
+
+【他想問的】
+${q}
+
+【請這樣回覆】用繁體中文，${p?'約 1200–1600 字':'約 800–1200 字'}，依序加小標：
+1. 一句話看懂你
+2. 你天生的樣子：亮點和容易卡住的地方，各 2–3 點
+3. 你現在走到哪裡：目前大運與今年流年對他代表什麼（先看喜忌，再看有沒有引動原局；接下來一兩年哪年該衝、哪年該守，點到重點即可）
+4. 回答他的問題：直接、具體，給方向
+5. 接下來可以做的 3 件事（依他的喜用給生活中做得到的事；缺的五行若是忌神就不要叫他補）
+${p?'6. 你們兩個：彼此在對方眼中的角色、最容易卡住的地方、相處的 3 個具體建議\n7. 送他一句話':'6. 送他一句話'}
+最後邀請他補充細節（例如目前工作、感情狀況），可以再看得更準。`;
+}
+
+function save(){try{localStorage.setItem('bazi-p',JSON.stringify({on:$('pOn').checked,name:$('pname').value,date:$('pdate').value,time:$('ptime').value,male:$('psexM').checked,unknown:$('punknown').checked,place:$('pplace').value}))}catch(e){}
+try{localStorage.setItem('bazi-in',JSON.stringify({date:$('date').value,time:$('time').value,place:ps.value,sex:$('sexM').checked,unknown:$('unknown').checked,dst:$('dst').checked,zi:$('zi').value,name:$('name').value,clon:$('clon').value,ctz:$('ctz').value}))}catch(e){}}
+function load(){try{const s=JSON.parse(localStorage.getItem('bazi-in')||'null');if(!s||!s.date)return false;
+ $('date').value=s.date;$('time').value=s.time||'';ps.value=s.place||'0';$(s.sex?'sexM':'sexF').checked=true;$('unknown').checked=!!s.unknown;$('dst').checked=!!s.dst;$('zi').value=s.zi||'1';$('name').value=s.name||'';$('clon').value=s.clon||121.5;$('ctz').value=s.ctz||8;return true}catch(e){return false}}
+
+try{const p=JSON.parse(localStorage.getItem('bazi-p')||'null');if(p){$('pOn').checked=!!p.on;$('pname').value=p.name||'';$('pdate').value=p.date||'';$('ptime').value=p.time||'';$(p.male?'psexM':'psexF').checked=true;$('punknown').checked=!!p.unknown;$('pplace').value=p.place||'0'}}catch(e){}
+if(!load()){$('date').value='1990-05-15';$('time').value='10:30';ps.value='0'}else isSample=false;
+$('f').addEventListener('input',()=>{isSample=false;render()});
+$('f').addEventListener('change',()=>{isSample=false;render()});
+['input','change'].forEach(ev=>{$('pf').addEventListener(ev,render);$('pOn').addEventListener(ev,render)});
+$('q').addEventListener('input',()=>{$('prompt').value=buildPrompt()});
+$('chips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$('q').value=b.dataset.q;$('prompt').value=buildPrompt();$('q').focus()});
+$('copy').addEventListener('click',()=>{
+  const txt=buildPrompt();$('prompt').value=txt;
+  const done=m=>{$('toast').textContent=m;setTimeout(()=>$('toast').textContent='',4000)};
+  const fallback=()=>{const d=document.querySelector('details');d.open=true;const p=$('prompt');p.focus();p.select();done('已選取全文，請長按或按 Ctrl/⌘+C 複製')};
+  try{navigator.clipboard.writeText(txt).then(()=>done('已複製，去 AI 貼上吧'),fallback)}catch(e){fallback()}
+});
+render();
+</script>
+
+</body>
+</html>
