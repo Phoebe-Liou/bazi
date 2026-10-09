@@ -708,25 +708,38 @@ function render(){
 function flowYear(){const n=new Date();const c=chart({y:n.getFullYear(),m:n.getMonth()+1,d:n.getDate(),hh:12,mm:0,tz:8,lon:120,dst:false,male:true,zi23:true});return c.Y}
 
 const JIE=['立春','驚蟄','清明','立夏','芒種','小暑','立秋','白露','寒露','立冬','大雪','小寒'];
+const PO=['子酉','卯午','辰丑','未戌','寅亥','巳申'],HUI=['寅卯辰','巳午未','申酉戌','亥子丑'],HUIEL=[0,1,3,4];
 function relText(r){
-  const P=r.P,pn=['年','月','日','時'],out=[],seen=new Set();
+  const P=r.P,pn=['年','月','日','時'],out=[];
   const live=P.map((p,i)=>p?i:-1).filter(i=>i>=0);
-  for(const i of live)for(const j of live){if(j<=i)continue;const A=P[i].b,B=P[j].b,a=ZHI[A],b=ZHI[B],pair=x=>x.includes(a)&&x.includes(b),pos=`（${pn[i]}支、${pn[j]}支）`;
-    if(A===B){out.push(`${a}${b}${ZIXING.includes(a)?'自刑':'伏吟'}${pos}`);continue;}
-    if(LIUHE.some(pair))out.push(`${a}${b}六合${pos}`);
-    if((A-B+12)%12===6)out.push(`${a}${b}相沖${pos}`);
-    if(HAI.some(pair))out.push(`${a}${b}相害${pos}`);
-    if(SANHE.some(pair))out.push(`${a}${b}半合${EL[[4,0,1,3][SANHE.findIndex(pair)]]}${pos}`);
-    if(XING.some(pair))seen.add(`${a}${b}相刑${pos}`);}
+  const gap=(i,j,k)=>{if(j-i===1)return '貼鄰';const mid=[];for(let x=i+1;x<j;x++)if(P[x])mid.push(pn[x]+(k==='b'?'支':'干')+(k==='b'?ZHI[P[x].b]:GAN[P[x].s]));return `隔位，中間有${mid.join('、')}`;};
+  const pos=(i,j,k)=>`（${pn[i]}${k==='b'?'支':'干'}、${pn[j]}${k==='b'?'支':'干'}，${gap(i,j,k)}）`;
+  for(const i of live)for(const j of live){if(j<=i)continue;const A=P[i].b,B=P[j].b,a=ZHI[A],b=ZHI[B],pair=x=>x.includes(a)&&x.includes(b),ps=pos(i,j,'b');
+    if(A===B){out.push(`${a}${b}${ZIXING.includes(a)?'自刑':'伏吟'}${ps}`);continue;}
+    if(LIUHE.some(pair))out.push(`${a}${b}六合${ps}`);
+    if((A-B+12)%12===6)out.push(`${a}${b}相沖${ps}`);
+    if(XING.some(pair))out.push(`${a}${b}相刑${ps}`);
+    if(HAI.some(pair))out.push(`${a}${b}相害${ps}`);
+    if(PO.some(pair))out.push(`${a}${b}相破${ps}`);
+    if(SANHE.some(pair))out.push(`${a}${b}半合${EL[[4,0,1,3][SANHE.findIndex(pair)]]}${ps}`);
+    if(HUI.some(pair))out.push(`${a}${b}半會${EL[HUIEL[HUI.findIndex(pair)]]}${ps}`);}
   const zs=live.map(i=>ZHI[P[i].b]).join('');
-  [['丑戌未','丑戌未三刑齊全'],['寅巳申','寅巳申三刑齊全']].forEach(([k,t])=>{if([...k].every(c=>zs.includes(c))){out.push(t+'（無恩之刑／恃勢之刑）');[...seen].forEach(x=>{if([...k].filter(c=>x.startsWith(c)||x[1]===c).length)seen.delete(x)})}});
-  out.push(...seen);
+  [['丑戌未','丑戌未三刑齊全（恃勢之刑）'],['寅巳申','寅巳申三刑齊全（無恩之刑）']].forEach(([k,t])=>{if([...k].every(c=>zs.includes(c)))out.push(t)});
   SANHE.forEach((k,n)=>{if([...k].every(c=>zs.includes(c)))out.push(`${k}三合${EL[[4,0,1,3][n]]}局齊全`)});
-  for(const i of live)for(const j of live){if(j<=i||i===2&&false)continue;const A=P[i].s,B=P[j].s;if(i===j)continue;
-    if(ganHe(A,B))out.push(`${GAN[A]}${GAN[B]}相合（${pn[i]}干、${pn[j]}干）`);
-    if(Math.abs(A-B)===6&&Math.min(A,B)<=3)out.push(`${GAN[A]}${GAN[B]}相沖（${pn[i]}干、${pn[j]}干）`);}
+  HUI.forEach((k,n)=>{if([...k].every(c=>zs.includes(c)))out.push(`${k}三會${EL[HUIEL[n]]}方齊全`)});
+  for(const i of live)for(const j of live){if(j<=i)continue;const A=P[i].s,B=P[j].s;
+    if(ganHe(A,B))out.push(`${GAN[A]}${GAN[B]}相合${pos(i,j,'s')}`);
+    if(Math.abs(A-B)===6&&Math.min(A,B)<=3)out.push(`${GAN[A]}${GAN[B]}相沖${pos(i,j,'s')}`);}
   return out;
 }
+function wangText(r){
+  const se=[4,2,0,0,2,1,1,2,3,3,2,4][r.Mo.b],x=elOfGan(r.ds);
+  const lv=x===se?'旺':(se+1)%5===x?'相':(x+1)%5===se?'休':(x+2)%5===se?'囚':'死';
+  const pn=['年','月','日','時'],root=[];
+  r.P.forEach((p,i)=>{if(!p)return;HIDE[p.b].forEach((h,j)=>{if(elOfGan(h)===x)root.push(`${pn[i]}支${ZHI[p.b]}（${GAN[h]}，${['本氣','中氣','餘氣'][j]}）`)})});
+  return `日主${GAN[r.ds]}${EL[x]}在月令${ZHI[r.Mo.b]}為「${lv}」；通根：${root.length?root.join('、'):'無'}`;
+}
+
 function monthsText(){
   const n=new Date(),Y=n.getFullYear(),ys=((Y-4)%60+60)%60%10,prev=(ys+9)%10;
   const cur=chart({y:Y,m:n.getMonth()+1,d:n.getDate(),hh:12,mm:0,tz:8,lon:120,dst:false,male:true,zi23:true}).Mo;
@@ -768,7 +781,7 @@ ${live.map(i=>`- ${pn[i]}支${ZHI[P[i].b]}：${HIDE[P[i].b].map(h=>GAN[h]+' '+te
 ${live.map(i=>{const x=extraOf(r,P[i],i);return `- ${PN[i]}：納音${x.ny}、十二長生${x.yx}、神煞${x.ss}`;}).join('\n')}
 （十二神煞年柱以日支起，其餘以年支起）
 
-[干支關係]
+[干支關係]（貼鄰者力量實，隔位且中間有字者較虛，請自行權衡輕重）
 ${relText(r).map(x=>'- '+x).join('\n')||'- 無明顯合沖刑害'}
 
 [五行分佈]（天干＋地支本氣）
@@ -776,6 +789,7 @@ ${relText(r).map(x=>'- '+x).join('\n')||'- 無明顯合沖刑害'}
 ${zero.map(x=>'- '+x).join('\n')}
 
 [月令與空亡]
+- ${wangText(r)}（結構事實，不等於身強身弱結論）
 - 月令：${ZHI[r.Mo.b]}（本氣${GAN[HIDE[r.Mo.b][0]]}${EL[elOfGan(HIDE[r.Mo.b][0])]}，為${r.ling}），${r.deling?'得令':'失令'}
 - 日支（夫妻宮）：${ZHI[r.D.b]}，本氣${tenGod(ds,HIDE[r.D.b][0])}
 - 空亡：${kw(r.Y,'年柱')}；${kw(r.D,'日柱')}
@@ -814,7 +828,9 @@ function buildPrompt(){
    絕不建議做法事、補財庫、買開運物或任何付費化解；有人這樣說，請他謹慎看待。
 4. 每個判斷都要落到生活裡看得見的樣子：他可能常有的感受、在工作或關係裡常見的狀況，讓他讀了會覺得「對，就是我」。
 5. 建議要具體、做得到，最好這個月就能開始。
-6. 不做醫療、法律、投資的具體指示；不預言疾病、手術、血光、意外或親人健康出事，最多溫和提醒多照顧身體、多關心家人；不說「投資必虧」「一定有第三者」這種話。若他透露身心狀況很糟，溫柔地建議他找信任的人或專業協助。${o.unknown?'\n7. 時辰未知，時柱不論；與子女、晚年、內心深處相關的判斷要保守。':''}
+6. 盤面以下方【命盤資料】為準，不要自行重排或改動干支；資料沒有提供的層級（例如某日、某時，或未列出的年份），就說明這次資料不足以判斷，不要自行補算或猜測。
+7. 如果他的問題裡已經帶著自己的結論或期待（例如「我是不是很適合創業？」），不要順著問法說，先依命盤講出比較支持的那一邊，再補充反面；只有正反證據真的一樣多時，才說看不出來。
+8. 不做醫療、法律、投資的具體指示；不預言疾病、手術、血光、意外或親人健康出事，最多溫和提醒多照顧身體、多關心家人；不說「投資必虧」「一定有第三者」這種話。若他透露身心狀況很糟，溫柔地建議他找信任的人或專業協助。${o.unknown?'\n9. 時辰未知，時柱不論；與子女、晚年、內心深處相關的判斷要保守。':''}
 
 【看盤方法】（你心裡要這樣看，但不用說給他聽）
 ・先看全局，再談十神：先判斷日主強弱與喜用忌神（月令最重要），再看五行流通、十神之間的生剋制化與格局，最後才套用下面的十神觀點。單一個字沒有吉凶，組合起來才定高低。
