@@ -283,7 +283,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:.88rem}
 <div class="wrap">
 <header>
   <h1>靈魂停看聽・命語🌙</h1>
-  <p>輸入國曆生日與出生地，自動以真太陽時排出四柱與大運。寫下你現在卡住的事，一鍵複製，貼給 AI 命理師看盤。</p>
+  <p>輸入國曆生日與出生地，自動排出四柱與大運。寫下你現在卡住的事，一鍵複製，貼給 AI 命理師看盤。</p>
 </header>
 
 <section aria-labelledby="h-in">
@@ -454,6 +454,15 @@ body{background:#f8f4ed!important;padding:0!important;color:#303e37!important}
 .pextra{display:flex;flex-direction:column;gap:3px;margin-top:auto;padding-top:8px;border-top:1px dashed var(--line);width:100%;font-size:.78rem;color:var(--ink)}
 .pextra span{display:flex;justify-content:center;gap:.4em;flex-wrap:wrap}
 .pcol{height:100%}.pextra{margin-top:auto!important}.hid{margin-bottom:8px}.pextra i{font-style:normal;color:var(--muted);font-size:.7rem;letter-spacing:.08em}
+</style>
+<style id="fix-mobile-overlap">
+.mingyu-desktop-scene::before{content:"過去心不可得，現在心不可得，未來心不可得。\A　　　——《金剛經》"!important;white-space:pre!important;height:auto!important;text-align:start!important;}
+
+.mingyu-brand{display:none!important}
+@media (max-width:750px){.mingyu-nav{display:none!important}}
+
+/* 手機首頁背景圖已內含標題文字，隱藏重複的文字層（保留給讀屏軟體） */
+.mingyu-mobile-brand,.mingyu-new-vertical{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;border:0!important}
 </style>
 <script>
 const GAN='甲乙丙丁戊己庚辛壬癸',ZHI='子丑寅卯辰巳午未申酉戌亥',EL='木火土金水';
