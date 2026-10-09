@@ -293,7 +293,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:.88rem}
     <div><span class="hint" style="display:block;margin-bottom:4px;font-weight:500">性別（排大運用）</span>
       <div class="seg"><label class="sx"><input type="radio" name="sex" id="sexM" value="1" checked><span class="sx-t">男</span></label><label class="sx"><input type="radio" name="sex" id="sexF" value="0"><span class="sx-t">女</span></label></div></div>
     <label>國曆生日<input type="date" id="date" min="1900-01-01" max="2100-12-31" required></label>
-    <label>出生時間（時鐘時間）<input type="time" id="time"></label>
+    <div class="hmwrap"><span class="hmlab">出生時間（時鐘時間）</span><div class="hm"><input id="hh" inputmode="numeric" maxlength="2" placeholder="時" aria-label="時（0–23）" autocomplete="off"><span>:</span><input id="mi" inputmode="numeric" maxlength="2" placeholder="分" aria-label="分（0–59）" autocomplete="off"></div><small class="hmhint">24 小時制，下午3點填15</small><input type="hidden" id="time"></div>
     <label class="check full"><input type="checkbox" id="unknown">不知道出生時間（不排時柱）</label>
     <label class="full">出生地<select id="place"></select></label>
     <div id="custom" class="grid full" hidden>
@@ -338,7 +338,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:.88rem}
       <div><span class="hint" style="display:block;margin-bottom:4px;font-weight:500">對方性別</span>
         <div class="seg"><label class="sx"><input type="radio" name="psex" id="psexM" value="1"><span class="sx-t">男</span></label><label class="sx"><input type="radio" name="psex" id="psexF" value="0" checked><span class="sx-t">女</span></label></div></div>
       <label>對方國曆生日<input type="date" id="pdate" min="1900-01-01" max="2100-12-31"></label>
-      <label>對方出生時間<input type="time" id="ptime"></label>
+      <div class="hmwrap"><span class="hmlab">對方出生時間</span><div class="hm"><input id="phh" inputmode="numeric" maxlength="2" placeholder="時" aria-label="時（0–23）" autocomplete="off"><span>:</span><input id="pmi" inputmode="numeric" maxlength="2" placeholder="分" aria-label="分（0–59）" autocomplete="off"></div><small class="hmhint">24 小時制，下午3點填15</small><input type="hidden" id="ptime"></div>
       <label class="check full"><input type="checkbox" id="punknown">不知道對方出生時間</label>
       <label class="full">對方出生地<select id="pplace"></select></label>
     </form>
@@ -463,6 +463,16 @@ body{background:#f8f4ed!important;padding:0!important;color:#303e37!important}
 
 /* 手機首頁背景圖已內含標題文字，隱藏重複的文字層（保留給讀屏軟體） */
 .mingyu-mobile-brand,.mingyu-new-vertical{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;border:0!important}
+</style>
+<style id="hm-input">
+.hmwrap{display:flex;flex-direction:column;gap:4px}
+.hmlab{font-size:.85rem;color:var(--muted);font-weight:500}
+.hm{display:flex;align-items:center;gap:6px}
+.hm input{width:4.2em!important;text-align:center;font-size:1.05rem;font-variant-numeric:tabular-nums}
+.hm span{font-weight:700;color:var(--muted)}
+.hm input:disabled{opacity:.45}
+.hmhint{font-size:.75rem;color:var(--muted)}
+.hm input.bad{border-color:var(--fire)!important}
 </style>
 <script>
 const GAN='甲乙丙丁戊己庚辛壬癸',ZHI='子丑寅卯辰巳午未申酉戌亥',EL='木火土金水';
@@ -1053,6 +1063,29 @@ $('copy').addEventListener('click',()=>{
 });
 render();
 </script>
+<script>
+(function(){
+  const pairs=[['','unknown'],['p','punknown']];
+  const pad=n=>String(n).padStart(2,'0');
+  function sync(p){
+    const h=document.getElementById(p+'hh'),m=document.getElementById(p+'mi'),t=document.getElementById(p+'time');
+    h.value=h.value.replace(/\D/g,'').slice(0,2);m.value=m.value.replace(/\D/g,'').slice(0,2);
+    const hv=h.value===''?NaN:+h.value,mv=m.value===''?0:+m.value;
+    const okH=hv>=0&&hv<=23,okM=mv>=0&&mv<=59;
+    h.classList.toggle('bad',h.value!==''&&!okH);m.classList.toggle('bad',m.value!==''&&!okM);
+    t.value=okH&&okM?pad(hv)+':'+pad(mv):'';
+  }
+  function fill(p){const t=document.getElementById(p+'time').value;if(t){const [a,b]=t.split(':');document.getElementById(p+'hh').value=a;document.getElementById(p+'mi').value=b;}}
+  function dis(){pairs.forEach(([p,u])=>{const d=document.getElementById(u).checked;document.getElementById(p+'hh').disabled=d;document.getElementById(p+'mi').disabled=d;});}
+  pairs.forEach(([p])=>{['hh','mi'].forEach(k=>{const el=document.getElementById(p+k);
+    el.form&&el.form.addEventListener('input',e=>{if(e.target===el)sync(p)},true);
+    el.addEventListener('focus',()=>el.select());});
+    document.getElementById(p+'hh').addEventListener('input',e=>{if(e.target.value.length===2)document.getElementById(p+'mi').focus()});
+    fill(p);});
+  document.addEventListener('change',dis);dis();
+})();
+</script>
+
 
 </body>
 </html>
