@@ -751,12 +751,13 @@ function wangText(r){
   return `日主${GAN[r.ds]}${EL[x]}在月令${ZHI[r.Mo.b]}為「${lv}」；通根：${root.length?root.join('、'):'無'}`;
 }
 
-function monthsText(){
-  const n=new Date(),Y=n.getFullYear(),ys=((Y-4)%60+60)%60%10,prev=(ys+9)%10;
-  const cur=chart({y:Y,m:n.getMonth()+1,d:n.getDate(),hh:12,mm:0,tz:8,lon:120,dst:false,male:true,zi23:true}).Mo;
-  const list=[];const xh=(((prev%5)*2+2+11)%10);list.push([11,xh,1]);
+function monthsText(r,Y){
+  const n=new Date(),ys=((Y-4)%60+60)%60%10,prev=(ys+9)%10;
+  const cur=chart({y:n.getFullYear(),m:n.getMonth()+1,d:n.getDate(),hh:12,mm:0,tz:8,lon:120,dst:false,male:true,zi23:true}).Mo;
+  const list=[[11,(((prev%5)*2+2+11)%10),1]];
   for(let k=0;k<11;k++)list.push([k,((ys%5)*2+2+k)%10,(k+2)%12]);
-  return list.map(([k,st,b])=>`${JIE[k]}起 ${GAN[st]}${ZHI[b]}${st===cur.s&&b===cur.b?'（目前）':''}`).join('、');
+  return list.map(([k,st,b],i)=>{const t=yinDong(r,st,b);const now=Y===n.getFullYear()&&st===cur.s&&b===cur.b;
+    return `- ${JIE[k]}起 ${GAN[st]}${ZHI[b]}（${tenGod(r.ds,st)}/${tenGod(r.ds,HIDE[b][0])}${t.length?'；'+t.join('、'):''}）${now?'← 目前':''}`;}).join('\n');
 }
 function goodRunText(r){
   if(r.str==='接近中和')return '- 連續喜用大運：強弱接近中和，請依全局自行判斷';
@@ -830,8 +831,11 @@ ${goodRunText(r)}
 [流年]（第一個為今年）
 ${upcoming(o,r).split('\n  ').map(x=>'- '+x).join('\n')}
 
-[今年流月]（依節氣交接，非國曆1號）
-- ${monthsText()}
+[今年流月]（${now.getFullYear()}年，依節氣交接，非國曆1號；小寒起的丑月屬上一年）
+${monthsText(r,now.getFullYear())}
+
+[明年流月]（${now.getFullYear()+1}年）
+${monthsText(r,now.getFullYear()+1)}
 
 今天日期：${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（台灣時間）`;
 }
@@ -852,7 +856,7 @@ function buildPrompt(){
    絕不建議做法事、補財庫、買開運物或任何付費化解；有人這樣說，請他謹慎看待。
 4. 每個判斷都要落到生活裡看得見的樣子：他可能常有的感受、在工作或關係裡常見的狀況，讓他讀了會覺得「對，就是我」。
 5. 建議要具體、做得到，最好這個月就能開始。
-6. 盤面以下方【命盤資料】為準，不要自行重排或改動干支；資料沒有提供的層級（例如某日、某時，或未列出的年份），就說明這次資料不足以判斷，不要自行補算或猜測。
+6. 盤面以下方【命盤資料】為準，不要自行重排或改動干支；資料沒有提供的層級（例如某日、某時，或未列出年份的逐月干支），就說明這次資料不足以判斷，不要自行補算或猜測。
 7. 如果他的問題裡已經帶著自己的結論或期待（例如「我是不是很適合創業？」），不要順著問法說，先依命盤講出比較支持的那一邊，再補充反面；只有正反證據真的一樣多時，才說看不出來。
 8. 不做醫療、法律、投資的具體指示；不預言疾病、手術、血光、意外或親人健康出事，最多溫和提醒多照顧身體、多關心家人；不說「投資必虧」「一定有第三者」這種話。若他透露身心狀況很糟，溫柔地建議他找信任的人或專業協助。${o.unknown?'\n9. 時辰未知，時柱不論；與子女、晚年、內心深處相關的判斷要保守。':''}
 
