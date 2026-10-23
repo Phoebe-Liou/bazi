@@ -527,7 +527,23 @@ const yun12=(s,b)=>YUN12[s%2===0?(b-YUNST[s]+12)%12:(YUNST[s]-b+12)%12];
 const SHA12=['劫煞','災煞','天煞','地煞','年煞','月煞','亡神','將星','攀鞍','驛馬','六害','華蓋'];
 const sha12=(base,b)=>{const start=[5,8,11,2][[0,1,2,3].find(k=>[[8,0,4],[11,3,7],[2,6,10],[5,9,1]][k].includes(base))];return SHA12[(b-start+12)%12];};
 const kongwang=p=>{const i=idx60(p.s,p.b),st=i-i%10;return ZHI[(st+10)%12]+ZHI[(st+11)%12];};
-const extraOf=(r,p,i)=>({ny:nayin(p),yx:yun12(r.ds,p.b),ss:sha12(i===0?r.D.b:r.Y.b,p.b)});
+const GUI={0:[1,7],4:[1,7],6:[1,7],1:[0,8],5:[0,8],2:[11,9],3:[11,9],8:[5,3],9:[5,3],7:[6,2]};
+const grp=b=>[[8,0,4],[2,6,10],[11,3,7],[5,9,1]].findIndex(g=>g.includes(b));
+const TAOHUA=[9,3,0,6],YIMA=[2,8,5,11],REN={0:3,2:6,4:6,6:9,8:0};
+const TIANDE={2:[3,'s'],3:[8,'b'],4:[8,'s'],5:[7,'s'],6:[11,'b'],7:[0,'s'],8:[9,'s'],9:[2,'b'],10:[2,'s'],11:[1,'s'],0:[5,'b'],1:[6,'s']};
+const YUEDE=[8,2,0,6];
+function shen(r,p,i){
+  const o=[],ds=r.ds,yb=r.Y.b,db=r.D.b;
+  if(GUI[ds].includes(p.b)||GUI[r.Y.s].includes(p.b))o.push('天乙貴人');
+  if((i!==2&&p.b===TAOHUA[grp(db)])||(i!==0&&p.b===TAOHUA[grp(yb)]))o.push('桃花');
+  if((i!==2&&p.b===YIMA[grp(db)])||(i!==0&&p.b===YIMA[grp(yb)]))o.push('驛馬');
+  if(REN[ds]!==undefined&&p.b===REN[ds])o.push('羊刃');
+  const td=TIANDE[r.Mo.b];if((td[1]==='s'&&p.s===td[0])||(td[1]==='b'&&p.b===td[0]))o.push('天德');
+  if(p.s===YUEDE[grp(r.Mo.b)])o.push('月德');
+  return o;
+}
+let extraOf=(r,p,i)=>({ny:nayin(p),yx:yun12(r.ds,p.b),ss:sha12(i===0?r.D.b:r.Y.b,p.b),js:[]});
+const _ex=extraOf;extraOf=(r,p,i)=>{const x=_ex(r,p,i);x.js=shen(r,p,i).filter(n=>n!==x.ss);return x;};
 const elOfGan=s=>Math.floor(s/2), cG=s=>`<span class="e${elOfGan(s)}">${GAN[s]}</span>`, cZ=b=>`<span class="e${ZHI_EL[b]}">${ZHI[b]}</span>`;
 const pstr=p=>p?GAN[p.s]+ZHI[p.b]:'未知';
 const ageStr=a=>{const y=Math.floor(a),m=Math.round((a-y)*12);return m===12?`${y+1}歲`:`${y}歲${m?m+'個月':''}`};
@@ -561,7 +577,7 @@ function pillarsHTML(o,r){
     if(!p)return `<div class="pcol"><div class="plabel">${PN[i]}</div><div class="god"></div><div class="char" style="color:var(--line)">？</div><div class="char" style="color:var(--line)">？</div><div class="hid"><span>時辰未知</span></div></div>`;
     return `<div class="pcol${i===2?' me':''}"><div class="plabel">${PN[i]}</div><div class="god">${i===2?(o.male?'元男':'元女'):tenGod(r.ds,p.s)}</div>
     <div class="char">${cG(p.s)}</div><div class="char">${cZ(p.b)}</div>
-    <div class="hid">${HIDE[p.b].map(h=>`<span><b class="e${elOfGan(h)}">${GAN[h]}</b>${tenGod(r.ds,h)}</span>`).join('')}</div>${(x=>`<div class="pextra"><span><i>星運</i>${x.yx}</span><span><i>納音</i>${x.ny}</span><span><i>神煞</i>${x.ss}</span></div>`)(extraOf(r,p,i))}</div>`}).join('');
+    <div class="hid">${HIDE[p.b].map(h=>`<span><b class="e${elOfGan(h)}">${GAN[h]}</b>${tenGod(r.ds,h)}</span>`).join('')}</div>${(x=>`<div class="pextra"><span><i>星運</i>${x.yx}</span><span><i>納音</i>${x.ny}</span><span><i>神煞</i>${[x.ss,...x.js].join('、')}</span></div>`)(extraOf(r,p,i))}</div>`}).join('');
 }
 // 地支、天干關係
 const LIUHE=['子丑','寅亥','卯戌','辰酉','巳申','午未'],HAI=['子未','丑午','寅巳','卯辰','申亥','酉戌'],SANHE=['申子辰','亥卯未','寅午戌','巳酉丑'];
@@ -798,8 +814,8 @@ ${live.map(i=>`- ${pn[i]}支${ZHI[P[i].b]}（本氣）：${tenGod(ds,HIDE[P[i].b
 ${live.map(i=>`- ${pn[i]}支${ZHI[P[i].b]}：${HIDE[P[i].b].map(h=>GAN[h]+' '+tenGod(ds,h)).join('、')}`).join('\n')}
 
 [各柱輔助值]
-${live.map(i=>{const x=extraOf(r,P[i],i);return `- ${PN[i]}：納音${x.ny}、十二長生${x.yx}、神煞${x.ss}`;}).join('\n')}
-（十二神煞年柱以日支起，其餘以年支起）
+${live.map(i=>{const x=extraOf(r,P[i],i);return `- ${PN[i]}：納音${x.ny}、十二長生${x.yx}、神煞${x.ss}${x.js.length?'、'+x.js.join('、'):''}`;}).join('\n')}
+（十二神煞年柱以日支起，其餘以年支起；天乙貴人看日干年干，桃花驛馬看日支年支，羊刃看日干，天德月德看月支）
 
 [干支關係]（貼鄰者力量實，隔位且中間有字者較虛，請自行權衡輕重）
 ${relText(r).map(x=>'- '+x).join('\n')||'- 無明顯合沖刑害'}
@@ -1017,7 +1033,7 @@ ${p?`【合盤怎麼看】（有另一半資料時）
 ・日坐偏印的伴侶不擅表達、不愛黏，給他精神空間反而會掏心掏肺；日坐正官對感情責任感重，重名份承諾。
 ・正緣時機補充：流年與日柱天地相合、配偶星透出、流年沖開財庫、紅鸞天喜、官印相生被引動，都是較容易遇到正緣的時候。
 ・三會局（如申酉戌會金）會讓該五行大增，吉凶看它是喜是忌。
-・天德、月德是古書所說的福德神煞，主逢凶化吉（網頁未計算，僅供知道）。
+・吉神只當輔助線索：天乙貴人是遇困有人幫；桃花是人緣好、受歡迎，不必說成爛桃花；驛馬是多走動、適合外地或跑動的工作；羊刃是剛強有衝勁，用在事上是魄力，用在人上易衝突；天德、月德古說主逢凶化吉。不要拿神煞取代十神與喜忌。
 ・五行十神的運作邏輯不變，但事件對應要跟著現代社會更新，要活學活用。
 ・印星在年月前後出現，離鄉發展更強，容易在外地生根。食傷為喜的人懂生活情趣，戀愛有自己的品味。
 ・正印在哪一柱，貴人就在哪：年柱是父母長輩上司，也可能有長輩資產；月柱是兄弟同輩；時柱是子女、部屬、同事。
