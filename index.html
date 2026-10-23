@@ -292,7 +292,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:.88rem}
     <label>稱呼（選填）<input id="name" placeholder="例：小美"></label>
     <div><span class="hint" style="display:block;margin-bottom:4px;font-weight:500">性別（排大運用）</span>
       <div class="seg"><label class="sx"><input type="radio" name="sex" id="sexM" value="1" checked><span class="sx-t">男</span></label><label class="sx"><input type="radio" name="sex" id="sexF" value="0"><span class="sx-t">女</span></label></div></div>
-    <label>國曆生日<input type="date" id="date" min="1900-01-01" max="2100-12-31" required></label>
+    <label>國曆生日（西元，例：1965）<input type="date" id="date" min="1900-01-01" max="2100-12-31" required></label>
     <div class="hmwrap"><span class="hmlab">出生時間（時鐘時間）</span><div class="hm"><input id="hh" inputmode="numeric" maxlength="2" placeholder="時" aria-label="時（0–23）" autocomplete="off"><span>:</span><input id="mi" inputmode="numeric" maxlength="2" placeholder="分" aria-label="分（0–59）" autocomplete="off"></div><small class="hmhint">24 小時制，下午3點填15</small><input type="hidden" id="time"></div>
     <label class="check full"><input type="checkbox" id="unknown">不知道出生時間（不排時柱）</label>
     <label class="full">出生地<select id="place"></select></label>
@@ -302,6 +302,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:.88rem}
     </div>
     <label class="check full"><input type="checkbox" id="dst">出生當時實施夏令時間（日光節約，時鐘撥快一小時）</label>
     <label class="check full"><input type="checkbox" id="solar">用真太陽時排盤（依出生地經度校正時辰；一般排盤 App 多半不校正）</label>
+    <p id="rocHint" class="hint warn full" hidden></p>
     <p id="dstHint" class="hint warn full" hidden></p>
     <label class="full">晚子時（23:00–24:00）
       <select id="zi"><option value="1">23 點換日（日柱算隔天）</option><option value="0">24 點換日（日柱算當天）</option></select></label>
@@ -550,7 +551,7 @@ const ageStr=a=>{const y=Math.floor(a),m=Math.round((a-y)*12);return m===12?`${y
 let isSample=true, last=null;
 
 function read(){
-  const [y,m,d]=($('date').value||'1990-05-15').split('-').map(Number);
+  let [y,m,d]=($('date').value||'1990-05-15').split('-').map(Number);if(y<1000)y+=1911;
   const [hh,mm]=($('time').value||'12:00').split(':').map(Number);
   const pv=ps.value, cust=pv==='c';
   const place=cust?`自訂（東經${$('clon').value}°，UTC+${$('ctz').value}）`:PLACES[+pv][0];
@@ -560,7 +561,7 @@ function read(){
 function analyze(o){
   const r=chart(o);const P=[r.Y,r.Mo,r.D,r.H], ds=r.D.s;r.P=P;r.ds=ds;
   let sup=0,all=0;const w=(h,x)=>{all+=x;if(/比肩|劫財|正印|偏印/.test(tenGod(ds,h)))sup+=x};
-  const SW=[.8,1.2,0,1.2],BW=[.8,2.5,1.5,1];P.forEach((p,i)=>{if(!p)return;if(i!==2)w(p.s,SW[i]);HIDE[p.b].forEach((h,j)=>w(h,(j?(j===1?.5:.3):1)*BW[i]))});
+  const SW=[.8,1.2,0,1.2],BW=[.8,2.5,1.5,1];const hurt=i=>{let f=1;[i-1,i+1].forEach(k=>{if(k<0||k>3||!P[k])return;const z=zhiRel2(P[i].b,P[k].b);if(z.includes('沖'))f=Math.min(f,.6);else if(/刑|害/.test(z))f=Math.min(f,.8);});return f;};P.forEach((p,i)=>{if(!p)return;if(i!==2)w(p.s,SW[i]);const hf=hurt(i);HIDE[p.b].forEach((h,j)=>w(h,(j?(j===1?.5:.3):1)*BW[i]*hf))});
   r.ratio=sup/all;r.str=r.ratio>=.58?'偏強':r.ratio<=.42?'偏弱':'接近中和';
   r.xi=r.str==='偏強'?'食傷、財、官殺（洩、耗、制）':r.str==='偏弱'?'印、比劫（生、扶）':'需看調候與五行流通';
   r.ling=tenGod(ds,HIDE[r.Mo.b][0]);r.deling=/比肩|劫財|正印|偏印/.test(r.ling);
@@ -585,7 +586,7 @@ function zhiRel(a,b){const A=ZHI[a],B=ZHI[b],pair=x=>x.includes(A)&&x.includes(B
   if(a===b)return '相同';if(LIUHE.some(pair))return '六合';if((a-b+12)%12===6)return '六沖';if(HAI.some(pair))return '相害';if(SANHE.some(pair))return '半合';return '';}
 const ganHe=(a,b)=>Math.abs(a-b)===5;
 function readP(){
-  const [y,m,d]=($('pdate').value||'1992-08-20').split('-').map(Number);
+  let [y,m,d]=($('pdate').value||'1992-08-20').split('-').map(Number);if(y<1000)y+=1911;
   const [hh,mm]=($('ptime').value||'12:00').split(':').map(Number);
   const pv=+$('pplace').value||0;
   return {y,m,d,hh,mm,unknown:$('punknown').checked||!$('ptime').value,tz:8,lon:PLACES[pv][1],dst:false,solar:$('solar').checked,male:$('psexM').checked,zi23:$('zi').value==='1',place:PLACES[pv][0],name:$('pname').value.trim()};
@@ -616,8 +617,8 @@ function extras(o,r){
   out.push(`財星：${ct.length?'透出 '+ct.join('、'):'未透干'}${ch.length?'；地支 '+ch.join('、'):''}；共${nC}個，${cLvl}${!ct.length&&ch.length?'；藏而不透，屬有財不顯':''}；財庫為${ZHI[KU[cEl]]}，${kuAt.length?'落在 '+kuAt.join('、')+'，開庫鑰匙是'+ZHI[(KU[cEl]+6)%12]+'（大運流年走到'+ZHI[(KU[cEl]+6)%12]+'為窗口期）':'原局無財庫'}${r.H&&tenGod(ds,r.H.s)==='偏財'?'；時干偏財':''}`);
   // 殺印相生
   const hasSha=P.some((p,i)=>p&&((i!==2&&tenGod(ds,p.s)==='七殺')||tenGod(ds,HIDE[p.b][0])==='七殺'));
-  const yinNear=[r.Mo&&tenGod(ds,r.Mo.s),r.H&&tenGod(ds,r.H.s),tenGod(ds,HIDE[r.D.b][0])].some(g=>/印/.test(g||''));
-  if(hasSha)out.push(`七殺${yinNear?'有印星貼身（月干、時干或日支），具殺印相生的條件，仍要看殺夠不夠旺、身能不能扛':'沒有印星貼身化解'}`);
+  const yinNear=[r.Mo&&tenGod(ds,r.Mo.s),tenGod(ds,HIDE[r.Mo.b][0]),r.H&&tenGod(ds,r.H.s),tenGod(ds,HIDE[r.D.b][0])].some(g=>/印/.test(g||''));
+  if(hasSha)out.push(`七殺${yinNear?'有印星貼身（月柱、時干或日支），具殺印相生的條件，仍要看殺夠不夠旺、身能不能扛':'沒有印星貼身化解'}`);
   // 官殺重印弱（倒吃甘蔗型）
   const cntG=re=>Object.entries(r.tally).filter(([k])=>re.test(k)).reduce((a,[,v])=>a+v.t+v.h*.5,0);
   const gs=cntG(/正官|七殺/),yn=cntG(/印/),ss=cntG(/食神|傷官/);
@@ -703,6 +704,30 @@ function godPower(r){
 function leadText(r){
   const pw=godPower(r),sc=o=>o.v+(o.ling?(o.ch?.5:1):0);return Object.entries(pw).sort((a,b)=>sc(b[1])-sc(a[1])).slice(0,3).map(([g,o])=>`${g}${o.ling?'（月令）':''}`).join('、');
 }
+function pathText(r){
+  const P=r.P,ds=r.ds,pn=['年','月','日','時'],pw=godPower(r),out=[];
+  const pos=re=>{const a=[];P.forEach((p,i)=>{if(!p)return;if(i!==2&&re.test(tenGod(ds,p.s)))a.push({i,k:'s'});if(re.test(tenGod(ds,HIDE[p.b][0])))a.push({i,k:'b'});});return a;};
+  const has=re=>Object.keys(pw).some(g=>re.test(g));
+  const pv=re=>Object.entries(pw).filter(([g])=>re.test(g)).reduce((a,[,o])=>a+o.v,0);
+  const broken=(A,B)=>{const hits=[];A.forEach(a=>B.forEach(b=>{if(a.i===b.i&&a.k===b.k)return;const ia=a.i,ib=b.i;if(ia===ib||Math.abs(ia-ib)!==1)return;const z=zhiRel2(P[ia].b,P[ib].b);if(/沖|刑|害|破/.test(z))hits.push(`${pn[Math.min(ia,ib)]}支、${pn[Math.max(ia,ib)]}支${z}`);}));return [...new Set(hits)];};
+  const heBound=g=>[0,1,3].some(i=>P[i]&&tenGod(ds,P[i].s)===g&&[i-1,i+1].some(k=>k>=0&&k<4&&k!==2&&P[k]&&ganHe(P[i].s,P[k].s)));
+  // 殺/官 → 印 路徑
+  [['七殺',/七殺/,'殺印相生'],['正官',/正官/,'官印相生']].forEach(([n,re,nm])=>{if(!has(re)||!has(/印/))return;const h=broken(pos(re),pos(/印/));
+    if(h.length)out.push(`${nm}的路被打斷（${h.join('；')}）：${n}的壓力不易轉成定力，反而悶在心裡，遇硬事容易避開、拖延或交給別人`);});
+  // 約束力被合
+  ['七殺','正官'].forEach(g=>{if(heBound(g))out.push(`${g}被天干合住：該約束他的力量綁不住，嘴上有方向，卻沒有力量逼他一步步做到`);});
+  // 制殺之神太弱
+  if(pw['七殺']&&pw['七殺'].v>=2&&(pw['食神']||pw['傷官'])&&pv(/食神|傷官/)<1)out.push('食傷太弱，制不住七殺，雖有制殺之名，實際作用有限');
+  // 印旺無財
+  if(pv(/正印|偏印/)>=2.5&&!has(/正財|偏財/))out.push('印旺而無財星制衡：腦中藍圖多，缺少落地與看結果的手腳，計畫容易大、做得少，或半途換方向');
+  // 食傷生財路
+  if(has(/食神|傷官/)&&has(/正財|偏財/)){const h=broken(pos(/食神|傷官/),pos(/正財|偏財/));if(h.length)out.push(`食傷生財的路被打斷（${h.join('；')}）：才華不容易直接變現`);}
+  // 根淺
+  const x=elOfGan(ds),roots=[];P.forEach((p,i)=>{if(!p)return;HIDE[p.b].forEach((h,j)=>{if(elOfGan(h)===x)roots.push(j);});});
+  if(roots.length&&roots.every(j=>j===2))out.push('日主只有餘氣根，根淺：表面撐得住，碰到真正的硬事底氣不足');
+  if(!roots.length)out.push('日主在地支完全無根：氣虛，要靠印比與大運扶持');
+  return out;
+}
 function heText(r){
   const P=r.P,ds=r.ds,pn=['年','月','日','時'],out=[];
   for(let i=0;i<4;i++)for(let j=i+1;j<4;j++){if(!P[i]||!P[j]||!ganHe(P[i].s,P[j].s))continue;
@@ -720,6 +745,7 @@ function powerText(r){const pw=godPower(r);
 function render(){
   const o=read();$('custom').hidden=ps.value!=='c';
   const dr=DST.find(r=>o.y>=r[0]&&o.y<=r[1]);
+  {const ry=+($('date').value||'').split('-')[0];const n=$('rocHint');if(n){n.hidden=!(ry&&ry<1000);n.textContent=`你輸入的年份是 ${ry}，已當作民國 ${ry} 年（西元 ${o.y} 年）排盤。下次可直接輸入西元年份。`;}}
   $('dstHint').hidden=!dr; if(dr)$('dstHint').textContent=`提醒：台灣 ${o.y} 年約在 ${dr[2]} 實施夏令時間。若生日在這段期間且出生證明登記的是當時時鐘時間，請勾選上方選項。`;
   $('time').disabled=o.unknown;
   const r=analyze(o); last={o,r};
@@ -854,6 +880,7 @@ ${zero.map(x=>'- '+x).join('\n')}
 - 十神數量：${g}
 - 十神力量：${powerText(r)}
 - 天干合絆：${heText(r).join('；')||'無'}
+- 力量通不通（生化、制化路徑檢查）：${pathText(r).join('；')||'未見明顯斷路'}
 - 命盤特徵：${extras(o,r).join('；')||'無'}
 - 組合的觸發條件：${patterns(r).join('；')||'無'}
 - 出現的組合：${combos.join('、')||'無'}
@@ -900,6 +927,7 @@ function buildPrompt(){
 ・斷運四法則：①先分喜忌再斷吉凶：十神吉凶不看名字，只看對命格是幫助還是消耗；同樣是財星，身強發財、身弱破財；同樣是官星，身強升職、身弱壓力是非。②重組合不重單星：傷官見官、梟印奪食、比劫奪財都有觸發條件，不要看到名詞就下結論。③流年靠引動才應驗：流年和原局發生合、沖、刑、害、伏吟，事情才會落地；沒有引動只是氣場浮動，不要說得太重。④命理是趨勢不是定數：知運、改心、修德、慎行，就能趨吉避凶。
 ・納音、十二運星、十二神煞、空亡都是輔助參考，判斷仍以十神、強弱、喜忌為主，不要只憑它們下結論。十二運星看日主在各支的氣勢（如帝旺、臨官有力，衰病死墓絕偏弱），可佐證強弱；神煞只當性格或際遇的小線索（將星有領導氣場、驛馬多走動變動、華蓋偏好獨處與玄學藝術、桃花人緣好），劫煞、災煞、亡神等不要拿來嚇人，最多說成要多留意的傾向；空亡不是沒有，而是比較虛、來得晚，或要多花力氣才落實。
 ・主導力量看「力量」不看「數量」：月令本氣、透干有根的十神才是主角；個數多但都藏在餘氣、或透干無根、或被合被沖的，只是配角。網頁的「主導十神」已按此排序。
+・看到殺印相生、官印相生、食傷生財、食神制殺這類組合，要確認路通不通：中間的地支若互相沖刑害，或負責轉化、制伏的那顆星太弱，就只是名字有、作用沒有，例如七殺要靠印化，但印與七殺所在地支相刑相害，壓力就轉不成定力。日主只有餘氣根算根淺，不要因為有根就當成扛得住。網頁的「力量通不通」會列出斷路。
 ・判斷一個十神時，先查它有沒有被合住：天干相合（如乙庚、丁壬）的兩個字會互相牽絆，原本的作用打折，例如七殺被劫財合住，壓力與規矩就綁不住他；被合的字不要再當成主導力量。貼鄰的合比隔位的合有力。網頁的「天干合絆」會列出。
 ・「有沒有」和「有沒有力」要分開：天干與藏干出現就算有，但力量差很多。看力量四件事：月令本氣最大（不透也很強）；透干又通根最有力，只透不根叫虛浮，只藏不透看本氣或餘氣；有沒有被合、被沖；旁邊有沒有被制化（食神制、印化，七殺會溫和很多）。大運流年也會把藏著的十神引出來，所以有人某幾年特別有感。十神的典型描述，是那個十神有力又沒被制時最明顯，力量越大越像；力量弱就要說「有一點這樣的傾向」。網頁有計算各十神的力量。
 ・先天格局改不了，破格就是破格，要誠實；能動的是兩件事：運勢時機，和後天的做法。所以談格局一定要接著講「哪幾年會比較輕鬆」和「平常可以怎麼做」。
