@@ -725,7 +725,7 @@ function pathText(r){
   if(has(/食神|傷官/)&&has(/正財|偏財/)){const h=broken(pos(/食神|傷官/),pos(/正財|偏財/));if(h.length)out.push(`食傷生財的路被打斷（${h.join('；')}）：才華不容易直接變現`);}
   // 根淺
   const x=elOfGan(ds),roots=[];P.forEach((p,i)=>{if(!p)return;HIDE[p.b].forEach((h,j)=>{if(elOfGan(h)===x)roots.push(j);});});
-  if(roots.length&&roots.every(j=>j===2))out.push('日主只有餘氣根，根淺：底氣不足，表現要和主導十神合看（例如正官強就是硬撐著做到，七殺弱就是遇事退縮）');
+  if(roots.length&&roots.every(j=>j===2))out.push('日主只有餘氣根，根淺：底氣不足，表現要和主導十神合看（例如正官強不等於必然能承擔責任，七殺弱不等於遇事退縮）');
   if(!roots.length)out.push('日主在地支完全無根：氣虛，要靠印比與大運扶持；表現要和主導十神合看，不可單憑無根就斷成說到做不到');
   return out;
 }
@@ -742,6 +742,30 @@ function powerText(r){const pw=godPower(r);
   return ['比肩','劫財','食神','傷官','偏財','正財','七殺','正官','偏印','正印'].filter(g=>pw[g]).map(g=>{const o=pw[g];
     const d=[o.ling?'月令本氣':'',o.tou?(o.fu?'透干無根（虛浮）':'透干有根'):'只藏地支（'+[...new Set(o.cang)].join('、')+'）',o.he?'天干被合絆，打折':'',o.ch?'所在地支被沖，打折':''].filter(Boolean).join('、');
     return `${g}${o.lvl}（${d}）`;}).join('；');}
+
+
+// 十神雙神45／三神120：保留原始命盤計算，使用現有 godPower 權重。
+const CROSS_GODS=['比肩','劫財','食神','傷官','正財','偏財','正官','七殺','正印','偏印'];
+const CROSS_GROUP={比肩:0,劫財:0,食神:1,傷官:1,正財:2,偏財:2,正官:3,七殺:3,正印:4,偏印:4};
+const CROSS_THEME={比肩:'自主與立場',劫財:'同儕與競爭',食神:'表達與享受',傷官:'突破與質疑',正財:'穩定資源',偏財:'機會與流動資源',正官:'規範與角色',七殺:'壓力與挑戰',正印:'支持與學習',偏印:'研究與不同觀點'};
+function crossChoose(arr,n){if(n===0)return [[]];if(arr.length<n)return [];return arr.flatMap((v,i)=>crossChoose(arr.slice(i+1),n-1).map(a=>[v,...a]));}
+const CROSS_PAIRS=crossChoose(CROSS_GODS,2),CROSS_TRIPLES=crossChoose(CROSS_GODS,3);
+function crossRel(a,b){const x=CROSS_GROUP[a],y=CROSS_GROUP[b];if(x===y)return '同類（須辨正偏）';if((x+1)%5===y)return a+'生'+b;if((y+1)%5===x)return b+'生'+a;if((x+2)%5===y)return a+'剋'+b;if((y+2)%5===x)return b+'剋'+a;return '待核對';}
+function crossData(r){
+ const power=godPower(r),total=CROSS_GODS.reduce((n,g)=>n+(power[g]?.v||0),0),avg=total/10;
+ const grades={};for(const g of CROSS_GODS){const v=power[g]?.v||0,ratio=avg?v/avg:0;grades[g]=ratio<.25?'極弱':ratio<.7?'偏弱':ratio<1.35?'中等':ratio<2.2?'偏強':'相對過旺';}
+ const make=(items,prefix)=>items.map((g,i)=>({id:prefix+String(i+1).padStart(prefix==='D'?2:3,'0'),g,score:g.reduce((n,x)=>n+(power[x]?.v||0),0),relations:crossChoose(g,2).map(([a,b])=>crossRel(a,b))})).sort((a,b)=>b.score-a.score||a.id.localeCompare(b.id));
+ return {power,grades,pairs:make(CROSS_PAIRS,'D'),triples:make(CROSS_TRIPLES,'T')};
+}
+function crossText(r){const d=crossData(r);const row=x=>`${x.id} ${x.g.map(g=>`${g}（${d.grades[g]}、權重${(d.power[g]?.v||0).toFixed(2)}）`).join('＋')}｜${x.relations.join('、')}｜主題：${x.g.map(g=>CROSS_THEME[g]).join('、')}`;
+ return `【十神結構化交叉（45組雙神、120組三神）】\n權重沿用本站原有 godPower 粗估；相對分級不代表人格能力，也不能直接判定成格。\n十神：${CROSS_GODS.map(g=>`${g}:${d.grades[g]}(${(d.power[g]?.v||0).toFixed(2)})`).join('；')}\n雙神重點：\n${d.pairs.slice(0,8).map(row).join('\n')}\n三神重點：\n${d.triples.slice(0,8).map(row).join('\n')}\n請分析雙神與三神互動、弱勢或受制時的替代解釋、反向性格證據；不得把十神關鍵字相加或斷言人格。`;
+}
+function renderCross(r){
+ let panel=document.getElementById('cross-engine-panel');if(!panel){panel=document.createElement('section');panel.id='cross-engine-panel';panel.style.cssText='margin:24px 0;padding:20px;border:1px solid #ded4c5;border-radius:16px;background:#fffcf7;color:#303e37';const target=document.getElementById('gods');(target?.parentElement||document.getElementById('prompt')?.parentElement||document.body).insertAdjacentElement('afterend',panel);}
+ const d=crossData(r),esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const item=x=>`<details style="border-top:1px solid #ded4c5;padding:10px 0"><summary style="cursor:pointer">${esc(x.id)}　${esc(x.g.join('＋'))}　<span style="color:#776f63">${x.score.toFixed(2)}</span></summary><div style="line-height:1.9">${x.g.map(g=>esc(g+'：'+d.grades[g]+'／'+CROSS_THEME[g])).join('　')}<div>${esc(x.relations.join('；'))}</div><small>此為結構索引，需再核對月令、通根、合沖及制化；不等於已成格或確定性格。</small></div></details>`;
+ panel.innerHTML=`<h3 style="margin:0 0 8px">十神交叉判讀｜45雙神・120三神</h3><p style="font-size:13px;color:#776f63">使用本頁原有十神權重。完整列出所有組合，依相對權重排序；低權重組合仍保留以供查核。</p><div style="display:flex;flex-wrap:wrap;gap:7px;margin:12px 0">${CROSS_GODS.map(g=>`<span style="border:1px solid #ded4c5;border-radius:30px;padding:4px 8px;font-size:12px">${g} ${d.grades[g]}</span>`).join('')}</div><details open><summary style="cursor:pointer;font-weight:bold">雙神 45 組（點選展開）</summary>${d.pairs.map(item).join('')}</details><details><summary style="cursor:pointer;font-weight:bold">三神 120 組（點選展開）</summary>${d.triples.map(item).join('')}</details>`;
+}
 
 function render(){
   const o=read();$('custom').hidden=ps.value!=='c';
@@ -771,7 +795,9 @@ function render(){
     $('ppillars').innerHTML=pillarsHTML(po,pr);
     $('pmeta').innerHTML=`<span>${po.name||'對方'}日主 <b class="e${elOfGan(pr.ds)}">${GAN[pr.ds]}${EL[elOfGan(pr.ds)]}</b>　·　最多的十神 ${pr.top.join('、')}　·　日支 ${ZHI[pr.D.b]}</span>`+(!$('pdate').value?'<span class="warn">還沒填對方生日，目前是範例。</span>':'')+(po.unknown?'<span>時辰未知，時柱不論。</span>':'');
     $('rel').innerHTML=relations(o,r,po,pr).map(x=>`<span>・${x.replace(/「(.+?)」/g,'<b>$1</b>')}</span>`).join('');}
+  renderCross(r);
   $('prompt').value=buildPrompt();
+  $('prompt').value+='\n\n'+crossText(r);
   save();
 }
 
